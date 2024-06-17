@@ -1,0 +1,50 @@
+#!/bin/zsh
+
+# Go up a directory
+alias ..='cd ..'
+
+# List long
+alias ll='ls -lhAF'
+
+# Search for a given process
+alias psg='ps -ef | grep'
+
+# Shortcuts
+alias cddl="cd ~/Downloads"
+alias cddm="cd ~/Documents"
+alias cdg="cd ~/git"
+
+# Always enable colored `grep` output
+# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+alias grep='grep --color=auto'
+
+# IP addresses
+alias ip.ext="curl -w '\n' ifconfig.me"
+alias ip.local="ipconfig getifaddr en0"
+
+# Flush Directory Service cache
+alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+
+# Empty the Trash on all mounted volumes and the main HDD.
+alias empty_trash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash"
+# Clear Apple’s System Logs to improve shell startup speed.
+alias clear_console="sudo rm -rfv /private/var/log/asl/*.asl"
+# Clear download history from quarantine. https://mths.be/bum
+alias clear_quarantine="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
+
+# URL-encode/decode strings
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+alias urldecode='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+
+# PlistBuddy alias
+alias plistbuddy="/usr/libexec/PlistBuddy"
+
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+    alias "${method}"="lwp-request -m '${method}'"
+done
+
+# Lock the screen (when going AFK)
+alias afk="pmset displaysleepnow"

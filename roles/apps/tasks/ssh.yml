@@ -1,0 +1,50 @@
+---
+- name: "Setup SSH dir"
+  ansible.builtin.file:
+    path: "~/.ssh"
+    mode: 0700
+    state: directory
+
+- name: "Write SSH private key to file"
+  copy:
+    dest: "~/.ssh/{{ ssh.identity }}"
+    mode: 0600
+    force: no
+    content: >
+      {{ lookup('community.general.bitwarden', ssh.bw_key, field=ssh.bw_field, bw_session=bw_session)[0] }}
+
+- name: "Write SSH public key to file"
+  copy:
+    dest: "~/.ssh/{{ ssh.identity }}.pub"
+    mode: 0644
+    force: no
+    content: >
+      {{ lookup('community.general.bitwarden', ssh.bw_key, field='login', bw_session=bw_session)[0].username }}
+
+- name: "Setup SSH config"
+  ansible.builtin.file:
+    path: "~/.ssh/config"
+    mode: 0644
+    state: touch
+
+- name: "Ensure AddKeysToAgent setting is set"
+  ansible.builtin.lineinfile:
+    path: "~/.ssh/config"
+    line: "AddKeysToAgent yes"
+    regexp: ^AddKeysToAgent
+
+- name: "Ensure UseKeychain setting is set"
+  ansible.builtin.lineinfile:
+    path: "~/.ssh/config"
+    line: "UseKeychain yes"
+    regexp: ^UseKeychain
+
+- name: "Ensure identity file is set in config"
+  ansible.builtin.lineinfile:
+    path: "~/.ssh/config"
+    line: "IdentityFile ~/.ssh/{{ ssh.identity }}"
+    regexp: "^IdentityFile ~/.ssh/{{ ssh.identity }}$"
+
+- name: "Add identity to ssh agent"
+  shell: >-
+    ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}

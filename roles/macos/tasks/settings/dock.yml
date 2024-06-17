@@ -1,0 +1,48 @@
+- name: "Dock: tile size"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "tilesize"
+    type: int
+    value: 55
+
+- name: "Dock: don't show recents"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "show-recents"
+    type: bool
+    value: false
+
+- name: "Dock: minimize windows into their app icon"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "minimize-to-application"
+    type: bool
+    value: true
+
+- name: "Dock: wipe all (default) app icons"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "persistent-apps"
+    type: array
+    value: []
+
+- name: "Dock: Turn off Notes hot corner"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "wvous-br-corner"
+    type: int
+    value: 1
+
+- name: "Dock: Turn off hot corners"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "wvous-br-modifier"
+    type: int
+    value: 0
+
+- name: "Dock: enable 'expose' function with 3-finger swipe"
+  osx_defaults:
+    domain: "com.apple.dock"
+    key: "showAppExposeGestureEnabled"
+    type: int
+    value: 1

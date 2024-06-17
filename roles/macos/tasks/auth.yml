@@ -1,0 +1,10 @@
+# https://browniebroke.com/blog/enabling-sudo-via-touchid-using-ansible/
+# https://apple.stackexchange.com/a/355880
+# https://github.com/fabianishere/pam_reattach
+- name: Uncomment pam_tid auth line
+  become: true
+  command: sed -ie '/auth       sufficient     pam_tid.so/s/^#//g' /etc/pam.d/sudo_local.template
+
+- name: Add pam_reattach auth line
+  become: true
+  command: echo "auth       optional       \/opt\/homebrew\/lib\/pam\/pam_reattach.so" >> /etc/pam.d/sudo_local.template

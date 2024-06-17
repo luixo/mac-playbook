@@ -1,0 +1,10 @@
+---
+- name: Add EDITOR env variable to .zshenv
+  ansible.builtin.blockinfile:
+    path: "~/.zshenv"
+    marker: "# {mark} VSCode"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      # Make VSCode the default editor.
+      export EDITOR='code'

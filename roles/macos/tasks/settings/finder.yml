@@ -1,0 +1,68 @@
+- name: "Finder: disable extension change warning"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "FXEnableExtensionChangeWarning"
+    type: bool
+    value: false
+
+- name: "Finder: show POSIX path in Finder title"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "FXShowPosixPathInTitle"
+    type: bool
+    value: true
+
+- name: "Finder: new window target as home directory"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "NewWindowTarget"
+    type: string
+    value: "PfHm"
+
+- name: "Finder: show desktop icons for external drives"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "ShowExternalHardDrivesOnDesktop"
+    type: bool
+    value: true
+
+- name: "Finder: show desktop icons for removable media"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "ShowRemovableMediaOnDesktop"
+    type: bool
+    value: true
+
+- name: "Finder: show path bar"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "ShowPathbar"
+    type: bool
+    value: true
+
+- name: "Finder: show status bar"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "ShowStatusBar"
+    type: bool
+    value: true
+
+- name: "Finder: hide recent tags from sidebar"
+  osx_defaults:
+    domain: "com.apple.finder"
+    key: "ShowRecentTags"
+    type: bool
+    value: false
+
+- name: "Finder: show all extensions"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "AppleShowAllExtensions"
+    type: bool
+    value: true
+
+- name: "Finder: always show hidden files in ~"
+  shell: chflags nohidden ~
+
+- name: "Finder: always show hidden files in ~/Library"
+  shell: chflags nohidden ~/Library

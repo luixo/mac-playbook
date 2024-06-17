@@ -1,0 +1,32 @@
+- name: Touch dotfiles used in other configurations
+  ansible.builtin.file:
+    path: "~/{{ item }}"
+    state: touch
+    mode: 0755
+  loop:
+    - .zshrc
+    - .zprofile
+    - .zshenv
+
+- name: Copy dotfiles to home dir
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "~/{{ item }}"
+    mode: 0644
+    force: true
+  loop:
+    - .aliases
+    - .functions
+
+- name: Add helper files to .zshrc
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} dotfiles"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      # Load the shell dotfiles, and then some:
+      for file in ~/.{path,aliases,functions}; do
+        [ -r "$file" ] && [ -f "$file" ] && source "$file";
+      done;
+      unset file;

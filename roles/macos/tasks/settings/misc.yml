@@ -1,0 +1,7 @@
+- name: "Voice recognition: use only russian"
+  osx_defaults:
+    domain: "com.apple.speech.recognition.AppleSpeechRecognition.prefs"
+    key: "VisibleNetworkSRLocaleIdentifiers"
+    type: array
+    value: >-
+      { "en_US" = 0; "ru_RU" = 1; }

@@ -1,0 +1,13 @@
+- name: "Clock: show 24h format"
+  osx_defaults:
+    domain: "com.apple.menuextra.clock"
+    key: "Show24Hour"
+    type: bool
+    value: true
+
+- name: "Clock: show day of week"
+  osx_defaults:
+    domain: "com.apple.menuextra.clock"
+    key: "ShowDayOfWeek"
+    type: bool
+    value: true

@@ -1,0 +1,9 @@
+- name: "Set preferred power settings when on battery"
+  shell: "pmset -b displaysleep 5 sleep 1"
+  changed_when: false
+  become: true
+
+- name: "Set preferred power settings when connected"
+  shell: "pmset -c displaysleep 10 sleep 1"
+  changed_when: false
+  become: true

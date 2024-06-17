@@ -1,0 +1,35 @@
+---
+# TODO: uncomment when "status" command is fixed
+# https://github.com/bitwarden/clients/issues/9254
+# - name: Install Bitwarden CLI utility
+#   package:
+#     name: bitwarden-cli
+#     state: present
+#     use: homebrew
+- name: Verify Bitwarden CLI is present
+  shell: bw --version
+
+- name: Ensure Bitwarden is logged in
+  shell: bw login --check
+  register: bw_login_status
+  failed_when: bw_login_status.rc != 0
+
+- name: Unlock Bitwarden vault
+  shell: bw unlock --raw "{{ bw_master_password.user_input }}"
+  register: bw_unlock
+  no_log: true
+
+- name: Report error on unlocking bitwarden vault
+  debug:
+    msg: "Error on unlocking BW: {{ bw_unlock.stderr }}"
+  when: bw_unlock is defined and bw_unlock.rc != 0
+
+- name: Set Bitwarden session environment variable
+  set_fact:
+    bw_session: "{{ bw_unlock.stdout }}"
+  when: bw_unlock is defined and bw_unlock.rc == 0
+
+- name: Output Bitwarden session key
+  debug:
+    msg: "Bitwarden is unlocked, and session key is set."
+  when: bw_unlock is defined and bw_unlock.rc == 0

@@ -1,0 +1,18 @@
+git:
+  user_name: Alexey Immoreev
+  email: lexx92@mail.ru
+  diff_image_location: ~/git/open-source/git-diff-image
+  ignore_file: ~/.gitignore_global
+  attributes_file: ~/.gitattributes
+  dir: ~/git/
+iterm:
+  tools_dir: ~/.iterm2
+ohmyzsh:
+  location: $HOME/.oh-my-zsh
+ssh:
+  identity: "id_ed25519"
+  bw_key: "ED25519 SSH key macbook"
+  bw_field: "Private key"
+gpg:
+  owner_email: lexx92@mail.ru
+  bw_key: "GPG ECDSA key MacOS"

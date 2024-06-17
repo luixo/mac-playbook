@@ -1,0 +1,30 @@
+- name: "Control center: show bluetooth (globally)"
+  osx_defaults:
+    domain: "com.apple.controlcenter"
+    key: "NSStatusItem Visible Bluetooth"
+    type: int
+    value: 1
+
+- name: "Control center: show battery percentage"
+  osx_defaults:
+    domain: "com.apple.controlcenter"
+    host: currentHost
+    key: "BatteryShowPercentage"
+    type: int
+    value: 1
+
+- name: "Control center: show bluetooth"
+  osx_defaults:
+    domain: "com.apple.controlcenter"
+    host: currentHost
+    key: "Bluetooth"
+    type: int
+    value: 2
+
+- name: "Control center: don't show 'now playing'"
+  osx_defaults:
+    domain: "com.apple.controlcenter"
+    host: currentHost
+    key: "NowPlaying"
+    type: int
+    value: 8

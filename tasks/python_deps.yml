@@ -1,0 +1,26 @@
+### Ansible setup
+# We don't want all the pip installs and various dependencies to conflict with
+# normal brew packages, this solves the issue by creating an ansible virtualenv
+# and tells ansible to use it
+###
+---
+- name: "Create deployment folder"
+  become: true
+  ansible.builtin.file:
+    path: /opt/deploy
+    state: directory
+    mode: 0777
+- name: "Install python libraries"
+  pip:
+    name: "{{ item }}"
+    state: latest
+    virtualenv: /opt/deploy
+    virtualenv_site_packages: yes
+  with_items:
+    - pip
+    - docker-py
+    - requests
+  become: yes
+- name: "Tell subsequent tasks to use our deploy virtualenv"
+  set_fact:
+    ansible_python_interpreter: /opt/deploy/bin/python

@@ -1,0 +1,48 @@
+### Taps ###
+# localsend
+tap "localsend/localsend"
+
+### Brews ###
+# required for mounty
+brew "ntfs-3g-mac"
+brew "act"
+brew "deno"
+brew "pinentry-mac"
+brew "powerlevel10k"
+brew "jq"
+brew "docker-credential-helper"
+brew "git"
+brew "gpg"
+brew "pam-reattach"
+brew "imagemagick"
+brew "exiftool"
+brew "nvm"
+
+### Casks ###
+cask "iterm2"
+cask "visual-studio-code"
+cask "docker"
+cask "ngrok"
+cask "ledger-live"
+cask "google-chrome"
+cask "arc"
+cask "datagrip"
+cask "postman"
+cask "mounty"
+cask "whisky"
+cask "outline-manager"
+cask "arq"
+cask "folx"
+cask "localsend"
+cask "notion"
+cask "zoom"
+cask "todoist"
+cask "ableton-live-suite"
+cask "telegram"
+cask "elmedia-player"
+cask "git-credential-manager"
+cask "slack"
+
+### MAS ###
+mas "Wireguard", id: 1451685025
+mas "Outline", id: 1356178125

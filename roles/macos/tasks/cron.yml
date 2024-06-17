@@ -1,0 +1,20 @@
+- name: Ensure a job to update brew exists
+  ansible.builtin.cron:
+    name: "update brew"
+    minute: "0"
+    hour: "12"
+    job: "yes | brew upgrade"
+
+- name: Ensure a job to update brew exists
+  ansible.builtin.cron:
+    name: "update oh-my-zsh"
+    minute: "0"
+    hour: "12"
+    job: "yes | omz update"
+
+- name: Ensure a job to cleanup DS files
+  ansible.builtin.cron:
+    name: "update oh-my-zsh"
+    minute: "0"
+    hour: "12"
+    job: "cleanup"

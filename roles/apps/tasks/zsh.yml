@@ -1,0 +1,12 @@
+---
+- name: Add separate tabs history for zsh
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} tabs history"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      # Helps keep tabs history separated
+      # https://superuser.com/a/1248123
+      unsetopt inc_append_history
+      unsetopt share_history
