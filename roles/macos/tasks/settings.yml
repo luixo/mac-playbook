@@ -1,0 +1,27 @@
+- name: Configure OS settings
+  import_tasks: settings/global.yml
+
+- name: Configure power settings
+  import_tasks: settings/power.yml
+
+- name: Configure keyboard settings
+  import_tasks: settings/keyboard.yml
+
+- name: Configure trackpad settings
+  import_tasks: settings/trackpad.yml
+
+- name: Configure Clock settings
+  import_tasks: settings/clock.yml
+
+- name: Configure Dock settings
+  import_tasks: settings/dock.yml
+
+- name: Configure Activity Monitor settings
+  import_tasks: settings/activity_monitor.yml
+
+- name: Configure Finder settings
+  import_tasks: settings/finder.yml
+
+- name: Restart affected services
+  shell: "killall cfprefsd Dock Finder SystemUIServer TouchBarServer 'Activity Monitor'"
+  become: true

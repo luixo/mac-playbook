@@ -1,0 +1,2 @@
+tap "gromgit/fuse"
+cask "macfuse"

@@ -1,0 +1,20 @@
+- name: "Trackpad: enable force click"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "com.apple.trackpad.forceClick"
+    type: bool
+    value: true
+
+- name: "Trackpad: force click"
+  osx_defaults:
+    domain: "com.apple.AppleMultitouchTrackpad"
+    key: "ActuateDetents"
+    type: int
+    value: 1
+
+- name: "Trackpad: enable tap to click"
+  osx_defaults:
+    domain: "com.apple.AppleMultitouchTrackpad"
+    key: "Clicking"
+    type: int
+    value: 1

@@ -1,0 +1,13 @@
+---
+- name: Install Homebrew apps
+  shell: brew bundle --file=roles/macos/files/main.bundle
+  register: brew_diff
+  changed_when: '"Installing" in brew_diff.stdout'
+
+- name: Install Homebrew apps - Changed output
+  debug:
+    var: brew_diff.stdout
+  when:
+    - brew_diff.changed
+    - not ansible_check_mode
+  changed_when: brew_diff.changed

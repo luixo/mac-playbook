@@ -1,0 +1,51 @@
+- name: "Global: disable automatic dash substitution"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "NSAutomaticDashSubstitutionEnabled"
+    type: bool
+    value: false
+
+- name: "Global: disable automatic quote substitution"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "NSAutomaticQuoteSubstitutionEnabled"
+    type: bool
+    value: false
+
+- name: "Global: disable spelling correction"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "NSAutomaticSpellingCorrectionEnabled"
+    type: bool
+    value: false
+
+- name: "Global: languages (in preferences)"
+  osx_defaults:
+    domain: ".GlobalPreferences_m"
+    key: "AppleLanguages"
+    type: array
+    value:
+      - ru-RU
+      - en-RU
+
+- name: "Global: languages (in domain)"
+  osx_defaults:
+    domain: "Apple Global Domain"
+    key: "AppleLanguages"
+    type: array
+    value:
+      - ru-RU
+      - en-RU
+
+- name: "Global: environment language"
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} Language"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      export LC_ALL=en_US.UTF-8
+
+- name: "Global: machine name"
+  ansible.builtin.hostname:
+    name: luixo

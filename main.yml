@@ -1,0 +1,26 @@
+---
+- name: Configure host.
+  hosts: localhost
+
+  vars:
+    downloads: ~/.ansible-downloads/
+
+  pre_tasks:
+    - name: Input Bitwarden password to unlock
+      ansible.builtin.pause:
+        prompt: "Enter Bitwarden master password"
+        echo: no
+      register: bw_master_password
+      no_log: true
+      tags: ["always"]
+    - name: Setup Bitwarden
+      import_tasks: tasks/bitwarden.yml
+      tags: ["always"]
+    - name: Include Python dependency task
+      import_tasks: tasks/python_deps.yml
+
+  roles:
+    - role: macos
+      tags: ["macos"]
+    - role: apps
+      tags: ["apps"]

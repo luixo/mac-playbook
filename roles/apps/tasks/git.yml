@@ -1,0 +1,120 @@
+---
+- name: Create git dir
+  ansible.builtin.file:
+    path: "{{ git.dir }}"
+    state: directory
+    mode: 0700
+
+- name: "Git: GPG program"
+  git_config:
+    scope: global
+    name: gpg.program
+    value: gpg
+
+- name: "Git: sign with GPG"
+  git_config:
+    scope: global
+    name: commit.gpgsign
+    value: true
+
+- name: "Get signingkey"
+  shell: >-
+    gpg --list-secret-keys --keyid-format=long | grep "\[S\]" | head -n 1 | awk '{print $2}' | cut -d '/' -f2
+  register: signingkey
+
+- name: "Git: username"
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ git.user_name }}"
+
+- name: "Git: email"
+  git_config:
+    scope: global
+    name: user.email
+    value: "{{ git.email }}"
+
+- name: "Git: signing key"
+  git_config:
+    scope: global
+    name: user.signingkey
+    value: "{{ signingkey.stdout }}"
+
+- name: "Git: editor"
+  git_config:
+    scope: global
+    name: core.editor
+    value: "code --wait"
+
+- name: "Git: excludes file"
+  git_config:
+    scope: global
+    name: core.excludesfile
+    value: "{{ git.ignore_file }}"
+
+- name: "Git: attributes file"
+  git_config:
+    scope: global
+    name: core.attributesfile
+    value: "{{ git.attributes_file }}"
+
+- name: "Git: default push branch"
+  git_config:
+    scope: global
+    name: push.default
+    value: current
+
+- name: "Git: credentials helper"
+  git_config:
+    scope: global
+    name: credential.helper
+    value: osxkeychain
+
+- name: "Setup git ignore config"
+  ansible.builtin.file:
+    path: "{{ git.ignore_file }}"
+    mode: 0644
+    state: touch
+
+- name: "Ensure ignore lines are set"
+  ansible.builtin.lineinfile:
+    path: "{{ git.ignore_file }}"
+    line: "{{ item }}"
+  loop:
+    - ".history/"
+    - "tsconfig.tsbuildinfo"
+
+- name: "Setup git attributes config"
+  ansible.builtin.file:
+    path: "{{ git.attributes_file }}"
+    mode: 0644
+    state: touch
+
+- name: "Add image diff details"
+  ansible.builtin.blockinfile:
+    path: "{{ git.attributes_file }}"
+    marker: "# {mark} image diff"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      # See https://github.com/ewanmellor/git-diff-image?tab=readme-ov-file#installation
+      *.bmp diff=image
+      *.gif diff=image
+      *.heic diff=image
+      *.jpeg diff=image
+      *.jpg diff=image
+      *.png diff=image
+      *.svg diff=image
+
+- name: "Git: diff image alias"
+  git_config:
+    scope: global
+    name: alias.diff-image
+    value: >-
+      '!f() { cd -- "${GIT_PREFIX:-.}"; GIT_DIFF_IMAGE_ENABLED=1 git diff "$@"; }; f'
+
+- name: "Git: image diff command"
+  git_config:
+    scope: global
+    name: diff.image.command
+    value: "{{ git.diff_image_location }}/git_diff_image"

@@ -1,0 +1,15 @@
+---
+- name: Add homebrew path, quarantine deactivation and shellenv command to .zprofile
+  ansible.builtin.blockinfile:
+    path: "~/.zprofile"
+    marker: "# {mark} Homebrew"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      # Adding Homebrew to PATH
+      export PATH=/opt/homebrew/bin:$PATH
+      # Deactivating quarantine for Homebrew casks
+      # https://houtianze.github.io/brew/mac/2020/02/18/brew-no-quarantine.html
+      export HOMEBREW_CASK_OPTS='--no-quarantine'
+      # https://github.com/Homebrew/brew/blob/master/Library/Homebrew/cmd/shellenv.sh
+      eval "$(brew shellenv)"

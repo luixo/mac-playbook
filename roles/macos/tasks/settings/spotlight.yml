@@ -1,0 +1,9 @@
+- name: "Spotlight: don't show on control center"
+  osx_defaults:
+    domain: "com.apple.Spotlight"
+    key: "NSStatusItem Visible Item-0"
+    state: absent
+
+- name: "Turn off Spotlight"
+  shell: "mdutil -a -i off"
+  become: true

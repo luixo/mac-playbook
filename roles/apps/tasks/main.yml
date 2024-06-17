@@ -1,0 +1,35 @@
+- name: Setup dotfiles
+  import_tasks: dotfiles.yml
+
+- name: Setup SSH
+  import_tasks: ssh.yml
+
+- name: Setup GPG
+  import_tasks: gpg.yml
+
+- name: Setup git
+  import_tasks: git.yml
+
+- name: Setup Homebrew
+  import_tasks: homebrew.yml
+
+- name: Setup zsh
+  import_tasks: zsh.yml
+
+- name: Setup iTerm
+  import_tasks: iterm.yml
+
+- name: Setup Docker
+  import_tasks: docker.yml
+
+- name: Setup oh-my-zsh
+  import_tasks: oh-my-zsh.yml
+
+- name: Setup powerlevel10k
+  import_tasks: p10k.yml
+
+- name: Setup NVM
+  import_tasks: nvm.yml
+
+- name: Setup VSCode
+  import_tasks: vscode.yml

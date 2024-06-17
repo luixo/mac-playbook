@@ -1,0 +1,3 @@
+What has changed:
+1. afk command is now `pmset displaysleepnow` instead of `/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend` (latter executable does not exist anymore)
+2. To enable touch id for sudo activation you now need to edit file `/etc/pam.d/sudo_local.template` (per https://apple.stackexchange.com/questions/259093/can-touch-id-on-mac-authenticate-sudo-in-terminal/355880#355880). I just uncommented pam_tid.so and added pam_reattach.so.

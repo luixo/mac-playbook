@@ -1,0 +1,11 @@
+---
+- name: Add default platform (ARM mac) to .zshenv
+  ansible.builtin.blockinfile:
+    path: "~/.zshenv"
+    marker: "# {mark} Docker"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      # Setting default platform for Docker to use appropriate images
+      # https://docs.docker.com/engine/reference/commandline/cli/#environment-variables
+      export DOCKER_DEFAULT_PLATFORM=linux/aarch64

@@ -1,0 +1,76 @@
+---
+- name: "Setup GPG dir"
+  ansible.builtin.file:
+    path: "~/.gnupg"
+    mode: 0700
+    state: directory
+
+- name: "Ensure GPG is installed"
+  shell: gpg --version
+
+- name: "Check if GPG key already installed"
+  shell: >-
+    gpg --list-keys  --with-colons | awk -F: '$1=="uid" {print $10; exit}' | grep {{ gpg.owner_email }}
+  register: gpg_list_result
+  ignore_errors: true
+
+- name: "Get GPG key bw id"
+  set_fact:
+    gpg_bw_id: >-
+      {{ lookup('community.general.bitwarden', gpg.bw_key, field='id', bw_session=bw_session)[0] | string }}
+  when: gpg_list_result.rc != 0
+
+- name: "Download GPG priv key to file"
+  shell: >-
+    bw get attachment {{ gpg.owner_email }}.priv.asc --itemid {{ gpg_bw_id }} --output ~/.gnupg/temporary/{{ gpg.owner_email }}.priv.asc --session {{ bw_session }}
+  when: gpg_list_result.rc != 0
+
+# Importing private subkey or public key is redundant as that info is included in a private key
+- name: "Import GPG priv key"
+  shell: >-
+    echo {{ lookup('community.general.bitwarden', gpg.bw_key, field='password', bw_session=bw_session)[0] }}
+    | gpg
+    --command-fd=0
+    --pinentry-mode=loopback
+    --import ~/.gnupg/temporary/{{ gpg.owner_email }}.priv.asc
+  when: gpg_list_result.rc != 0
+
+- name: "Download GPG ownertrust to file"
+  shell: >-
+    bw get attachment ownertrust.txt --itemid {{ gpg_bw_id }} --output ~/.gnupg/temporary/ownertrust.txt --session {{ bw_session }}
+  when: gpg_list_result.rc != 0
+
+- name: "Import GPG ownertrust"
+  shell: >-
+    gpg --import-ownertrust ~/.gnupg/temporary/ownertrust.txt
+  when: gpg_list_result.rc != 0
+
+- name: "Setup GPG agent config"
+  ansible.builtin.file:
+    path: "~/.gnupg/gpg-agent.conf"
+    mode: 0600
+    state: touch
+
+- name: "Add pinetry program for mac"
+  ansible.builtin.lineinfile:
+    path: "~/.gnupg/gpg-agent.conf"
+    line: "pinentry-program /opt/homebrew/bin/pinentry-mac"
+
+- name: "Set GPG TTY in zsh"
+  ansible.builtin.blockinfile:
+    path: "~/.zshenv"
+    marker: "# {mark} GPG"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      # Avoid issues with `gpg` as installed via Homebrew.
+      # https://stackoverflow.com/a/42265848/96656
+      export GPG_TTY=$TTY
+
+- name: Restart GPG agent
+  ansible.builtin.shell: gpgconf --kill gpg-agent
+
+- name: Delete temporary files
+  ansible.builtin.file:
+    state: absent
+    path: "~/.gnupg/temporary"
