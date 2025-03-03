@@ -3,4 +3,4 @@
     domain: "com.apple.ActivityMonitor"
     key: "IconType"
     type: int
-    value: 5
+    value: 6

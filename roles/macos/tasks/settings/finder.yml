@@ -61,8 +61,25 @@
     type: bool
     value: true
 
-- name: "Finder: always show hidden files in ~"
-  shell: chflags nohidden ~
+- name: "Finder: show all files"
+  osx_defaults:
+    domain: "com.apple.Finder"
+    key: "AppleShowAllFiles"
+    type: bool
+    value: true
 
-- name: "Finder: always show hidden files in ~/Library"
-  shell: chflags nohidden ~/Library
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
+- name: "Finder: snap to grid"
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.Finder.plist
+  loop:
+    - "Set :StandardViewSettings:IconViewSettings:arrangeBy name"
+  changed_when: false
+
+- name: "Finder: sort by name"
+  osx_defaults:
+    domain: "com.apple.Finder"
+    key: "FXPreferredGroupBy"
+    type: string
+    value: "Name"

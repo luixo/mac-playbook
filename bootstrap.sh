@@ -1,5 +1,10 @@
 #!/bin/zsh
 
+playbook_repo_dir=~/git/mac-playbook
+
+# We want to throw in case something fails
+set -e
+
 # Install Xcode Command Line Developer Tools
 echo "Checking for Xcode Command Line Developer Tools..."
 xcode-select -p >& /dev/null || {
@@ -22,9 +27,9 @@ fi
 
 # Clone playbook to a local machine
 echo "Verifying playbook is downloaded..."
-mkdir -p ~/git/personal/mac-playbook
-if [[ ! -d .git ]]; then
-  git clone https://github.com/luixo/mac-playbook.git ~/git/personal/mac-playbook
+if [[ ! -d $playbook_repo_dir ]]; then
+  mkdir ~/git
+  git clone https://github.com/luixo/mac-playbook.git $playbook_repo_dir
 fi
 
 # Install Homebrew
@@ -32,11 +37,11 @@ echo "Checking for Homebrew..."
 if ! brew config >& /dev/null; then 
   if [[ ! -f /opt/homebrew/bin/brew ]]; then
     echo "Installing Homebrew..." 
-    NONINTERACTIVE=1 sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 fi
 
-# Activate Homebrew for the boostrapt script
+# Activate Homebrew for the bootstrap script
 echo "Adding homebrew to PATH"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -48,8 +53,13 @@ export HOMEBREW_CASK_OPTS='--no-quarantine'
 brew install --quiet jq ansible python pyenv python-setuptools virtualenv
 
 # Temporary: download working bw-cli version
-curl -L -o /tmp/bw-macos-2024.1.0.zip https://github.com/bitwarden/clients/releases/download/cli-v2024.1.0/bw-macos-2024.1.0.zip
-sudo unzip -d /usr/local/bin /tmp/bw-macos-2024.1.0.zip
+bw_cli_temp_location=/tmp/bw-macos-2024.1.0.zip
+bw_cli_executable=/usr/local/bin/bw
+if [ ! -f $bw_cli_executable ]; then
+  curl -L -o $bw_cli_temp_location https://github.com/bitwarden/clients/releases/download/cli-v2024.1.0/bw-macos-2024.1.0.zip
+  unzip -d /usr/local/bin $bw_cli_temp_location
+  chmod +x $bw_cli_executable
+fi
 
 # Login to Bitwarden CLI
 echo "Checking for Bitwarden CLI..."
@@ -67,6 +77,8 @@ while [[ ! "$output" == *"Your vault is locked"* ]] || [[ $unlock_count -eq $unl
   if [[ ! "$output" == *"You are logged in"* ]]; then
     echo "Wrong credentials, please try again"
     (( unlock_count++ ))
+  else
+    break
   fi
 done
 
@@ -87,18 +99,23 @@ done
 # fi
 
 echo "Switching to the playbook dir..."
-cd ~/git/personal/mac-playbook
+cd $playbook_repo_dir
 
 # Install python environment to run ansible
 echo "Checking python environment..."
-eval "$(pyenv init -)"
-python3 -m venv venv
-source venv/bin/activate
+if [[ ! -d venv ]]; then 
+  eval "$(pyenv init -)"
+  python3 -m venv venv
+  source venv/bin/activate
+  # We need this package to run Ansible
+  pip3 install packaging
+fi
 
 # Install ansible requirements
 ansible-galaxy install -r requirements.yml
 
 echo ""
 echo "Finished bootstrapping!"
-echo "Run \`eval \"\$(/opt/homebrew/bin/brew shellenv)\" && source venv/bin/activate && ansible-playbook main.yml --ask-become-pass\` to run the installation."
+echo "Run \`ansible-playbook main.yml --ask-become-pass\` to engage Ansible playbook"
+echo "If session is lost - reenable prerequisites for the run: \`cd $playbook_repo_dir && eval \"\$(/opt/homebrew/bin/brew shellenv)\" && source venv/bin/activate\`"
 echo ""

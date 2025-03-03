@@ -1,0 +1,7 @@
+---
+- name: "Change playbook repo origin"
+  community.general.git_config:
+    scope: local
+    repo: "{{ git.dir }}{{ playbook.repo }}"
+    name: remote.origin.url
+    value: "git@github.com:{{ playbook.owner }}/{{ playbook.repo }}.git"

@@ -1,0 +1,4 @@
+- name: Apply lporg config
+  shell: lporg load -n -y -c {{ role_path }}/files/lporg.yaml
+  # TODO: Enable lporg when saving works again: https://github.com/blacktop/lporg/issues/71
+  when: false

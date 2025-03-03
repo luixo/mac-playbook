@@ -29,16 +29,24 @@
     block: |
       source {{ iterm.tools_dir }}/.iterm2_shell_integration.zsh
 
-- name: "Defaults: set custom file to load settings from"
-  osx_defaults:
-    domain: "com.googlecode.iterm2"
-    key: "PrefsCustomFolder"
-    type: string
-    value: "~/.iterm2_settings"
-
 - name: "Defaults: set load settings from custom file"
-  osx_defaults:
-    domain: "com.googlecode.iterm2"
-    key: "LoadPrefsFromCustomFolder"
-    type: bool
-    value: true
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/Falkor/dotfiles/raw/refs/heads/master/fonts/SourceCodePro+Powerline+Awesome+Regular.ttf"
+    dest: /Library/Fonts/
+
+- name: "Defaults: add dynamic profiles list"
+  block:
+    - name: "Ensures directory exists"
+      file:
+        path: "~/Library/Application Support/iTerm2/DynamicProfiles"
+        recurse: true
+        state: directory
+
+    - name: "Copy over the profiles"
+      ansible.builtin.copy:
+        src: "{{ role_path }}/files/{{ item }}"
+        dest: "~/Library/Application Support/iTerm2/DynamicProfiles"
+        mode: 0644
+      loop:
+        - Profiles.json

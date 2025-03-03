@@ -20,7 +20,7 @@
     - pip
     - docker-py
     - requests
-  become: yes
+  become: true
 - name: "Tell subsequent tasks to use our deploy virtualenv"
   set_fact:
     ansible_python_interpreter: /opt/deploy/bin/python

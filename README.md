@@ -2,45 +2,75 @@
 
 This playbook bootstraps a fresh Mac to be ready for my personal usage.
 
+## Prerequisites
+
+1. Run MacOS install wizard
+1. Login to iCloud
+1. Login into [Bitwarden Vault](https://vault.bitwarden.com/#/settings/security/security-keys) to obtain an API key
+1. Add Terminal app to Settings -> Privacy and Security -> Full Disk Access
+
 ## Installation
 
-1. Run MacOS install wizard and login to iCloud & App Store.
-1. Run `sudo source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)`.
+```sh
+# Bootstrap
+source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)`
+# Run playbook
+ansible-playbook main.yml --ask-become-pass
+# (wait a bit until Bitwarden password is obtained by the playbook)
+```
 
-## If old machine is not available
+In case you lost the session after bootstrap has finished:
 
-Get data from Arq backup:
+```sh
+# Change directory to playbook's
+cd git/mac-playbook
+# Add homebrew to path
+eval "$(/opt/homebrew/bin/brew shellenv)"
+# Activate python virtual env
+source venv/bin/activate
+```
 
-- Transfer `~/git` (probably skip some repos in `~/git/open-source`) to a new machine.
-- Transfer `~/Documents` to a new machine.
-- Transfer (what's needed) `~/Downloads` to a new machine.
+## Data to backup from old machine / Arq
 
-## If old machine is available
-
-- Get the same data, but from an old machine.
+- `~/git` (probably skip some repos in `~/git/open-source`)
+- `~/Documents` / `~/Downloads` / `~/Desktop`
 - Compare changes made to `roles/apps/files` with files from `~`.
 
 ## Manual tasks
 
-- Arc: authorize, set as default browser, enable sync, add extensions: AdBlock, Bitwarden (auth), React Devtools
-- VSCode: authorize, enable settings sync
-- DataGrip: authorize
-- Whisky: download GTPK
-- Outline Manager: authorize (git algo configs dir contains credentials, connect and run `cat /opt/outline/access.txt` to get keys)
-- Outline: add tunnels from Outline Manager
+### Authorize
+
+With apps
+
+- Arc
+- VSCode (through "enable settings sync")
+- DataGrip
+- Amnezia (from bitwarden)
+- Notion
+- Todoist
+- Slack
+- Ableton
+- Telegram
+- Docker (Y.Cloud auth via [token](https://yandex.cloud/ru/docs/container-registry/operations/authentication#user-oauth))
+- Ledger Live
+
+### The rest
+
+- Touch ID: add more fingerprints
 - Wireguard: add tunnels from algo git directory
-- Arq: adopt a backup set, create a new backup plan
-- Notion: authorize
-- Todoist: authorize
-- Slack: authorize
-- Ableton: disable automatic update and generate Authorize.auz
-- Telegram: authorize, "emoji -> turn off 'suggest'", "general -> emoji -> turn off 'emoji autoreplace'" and "general -> interface -> all off", "sound -> off", "send messages as cmd+enter"
-- Ngrok: authorize (get token from website) # ngrok config add-authtoken <TOKEN>
-- Docker: Y.Cloud auth (token from here: https://yandex.cloud/ru/docs/container-registry/operations/authentication#user-oauth)
-- Change screenshots path (cmd + shift + 5 -> choose path)
-- Touch ID - add more fingerprints
-- Open any folder, set "icons" view, cmd+J, use "snap to grid", set "sort by name", click "set as default"
-- Ledger Live: authorize
+- Ableton: disable automatic update
+- Arc: set as default browser, enable sync, add extensions: AdBlock, Bitwarden (auth), React Devtools
+- Arq: create a new backup plan
+- Arq: transfer `~/Library/Application Support/Arc/User Data` from backup
+- GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
+- Apple locator: register
+- Telegram options
+  - emoji -> turn off 'suggest'
+  - general -> emoji -> turn off 'emoji autoreplace'
+  - general -> interface -> all off
+  - sound -> off
+  - send messages as cmd+enter
+  - appearance -> text size 3/7
 
 ## Cleaning up old Mac
 

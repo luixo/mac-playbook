@@ -3,54 +3,59 @@
   shell: ls -a ~ | grep oh-my-zsh
   register: zsh_result
   ignore_errors: yes
+  changed_when: false
 
 - name: Install oh-my-zsh
-  shell: >-
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
   when: zsh_result.rc != 0
+  block:
+    - name: Download and install
+      when: zsh_result.rc != 0
+      shell: >-
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
-- name: Copy original .zshrc over oh-my-zsh's
-  ansible.builtin.copy:
-    src: ~/.zshrc.pre-oh-my-zsh
-    dest: ~/.zshrc
-  when: zsh_result.rc != 0
+    - name: Copy original .zshrc over oh-my-zsh's
+      ansible.builtin.copy:
+        src: ~/.zshrc.pre-oh-my-zsh
+        dest: ~/.zshrc
 
-- name: Remove .zshrc.pre-oh-my-zsh
-  ansible.builtin.file:
-    path: ~/.zshrc.pre-oh-my-zsh
-    state: absent
+    - name: Remove .zshrc.pre-oh-my-zsh
+      ansible.builtin.file:
+        path: ~/.zshrc.pre-oh-my-zsh
+        state: absent
 
-- name: Clone zsh-nvm to oh-my-zsh
-  ansible.builtin.git:
-    repo: https://github.com/lukechilds/zsh-nvm
-    dest: "{{ ohmyzsh.location }}/custom/plugins/zsh-nvm"
-    single_branch: yes
-    version: master
+- name: oh-my-zsh extenstions
+  block:
+    - name: Clone zsh-nvm to oh-my-zsh
+      ansible.builtin.git:
+        repo: https://github.com/lukechilds/zsh-nvm
+        dest: "{{ ohmyzsh.location }}/custom/plugins/zsh-nvm"
+        single_branch: yes
+        version: master
 
-- name: Clone zsh-autosuggestions to oh-my-zsh
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: "{{ ohmyzsh.location }}/custom/plugins/zsh-autosuggestions"
-    single_branch: yes
-    version: master
+    - name: Clone zsh-autosuggestions to oh-my-zsh
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: "{{ ohmyzsh.location }}/custom/plugins/zsh-autosuggestions"
+        single_branch: yes
+        version: master
 
-- name: Add oh-my-zsh, zcompdump location, p10k theme, plugins etc to .zprofile
-  ansible.builtin.blockinfile:
-    path: "~/.zprofile"
-    marker: "# {mark} Oh-my-zsh"
-    prepend_newline: true
-    append_newline: true
-    block: |
-      # Path to your oh-my-zsh installation.
-      export ZSH="{{ ohmyzsh.location }}"
-      # Create `.zcompdump-<name>-<version>` dumps in a given location instead of ~
-      export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
-      # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-      ZSH_THEME="powerlevel10k/powerlevel10k"
-      # Which plugins would you like to load?
-      plugins=(git zsh-nvm zsh-autosuggestions)
-      # Auto run `nvm use` in dirs with `.nvmrc`
-      # https://github.com/lukechilds/zsh-nvm/tree/master?tab=readme-ov-file#auto-use
-      export NVM_AUTO_USE=true
-      # Run Oh-My-Zsh
-      source $ZSH/oh-my-zsh.sh
+    - name: Add oh-my-zsh, zcompdump location, p10k theme, plugins etc to .zprofile
+      ansible.builtin.blockinfile:
+        path: "~/.zprofile"
+        marker: "# {mark} Oh-my-zsh"
+        prepend_newline: true
+        append_newline: true
+        block: |
+          # Path to your oh-my-zsh installation.
+          export ZSH="{{ ohmyzsh.location }}"
+          # Create `.zcompdump-<name>-<version>` dumps in a given location instead of ~
+          export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
+          # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+          ZSH_THEME="powerlevel10k/powerlevel10k"
+          # Which plugins would you like to load?
+          plugins=(git zsh-nvm zsh-autosuggestions)
+          # Auto run `nvm use` in dirs with `.nvmrc`
+          # https://github.com/lukechilds/zsh-nvm/tree/master?tab=readme-ov-file#auto-use
+          export NVM_AUTO_USE=true
+          # Run Oh-My-Zsh
+          source $ZSH/oh-my-zsh.sh

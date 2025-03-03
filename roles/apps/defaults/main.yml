@@ -16,3 +16,5 @@ ssh:
 gpg:
   owner_email: lexx92@mail.ru
   bw_key: "GPG ECDSA key MacOS"
+screenshots:
+  dir: "~/Desktop/screenshots"

@@ -12,44 +12,63 @@
     type: int
     value: 5
 
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: add 'next input source' hotkey"
-  osx_defaults:
-    domain: "com.apple.symbolichotkeys"
-    key: "AppleSymbolicHotKeys:60:value:parameters:2"
-    type: int
-    value: 1048576
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
+  loop:
+    - "Set :AppleSymbolicHotKeys:60:value:parameters:2 1048576"
+  changed_when: false
 
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: add 'previous input source' hotkey"
-  osx_defaults:
-    domain: "com.apple.symbolichotkeys"
-    key: "AppleSymbolicHotKeys:61:value:parameters:2"
-    type: int
-    value: 1572864
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
+  loop:
+    - "Set :AppleSymbolicHotKeys:61:value:parameters:2 1572864"
+  changed_when: false
 
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: disable 'open spotlight' hotkey"
-  osx_defaults:
-    domain: "com.apple.symbolichotkeys"
-    key: "AppleSymbolicHotKeys:64:enabled"
-    type: int
-    value: 0
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
+  loop:
+    - "Set :AppleSymbolicHotKeys:64:enabled 0"
+  changed_when: false
 
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: disable 'open finder' hotkey"
-  osx_defaults:
-    domain: "com.apple.symbolichotkeys"
-    key: "AppleSymbolicHotKeys:65:enabled"
-    type: int
-    value: 0
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
+  loop:
+    - "Set :AppleSymbolicHotKeys:65:enabled 0"
+  changed_when: false
 
+# TODO: migrate to osx_defaults when it supports dictionaries
+# https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: remove all keyboards"
-  osx_defaults:
-    domain: "com.apple.HIToolbox"
-    key: "AppleEnabledInputSources"
-    type: array
-    value:
-      - >-
-        { InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = -2; "KeyboardLayout Name" = "US Extended"; }
-      - >-
-        { InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 19458; "KeyboardLayout Name" = RussianWin; }
+  shell: >-
+    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.HIToolbox.plist
+  loop:
+    - "Delete :AppleEnabledInputSources"
+    - "Add :AppleEnabledInputSources array"
+    - "Add :AppleEnabledInputSources: dict"
+    - "Add :AppleEnabledInputSources:0:InputSourceKind string 'Keyboard Layout'"
+    - "Add :AppleEnabledInputSources:0:'KeyboardLayout ID' integer 252"
+    - "Add :AppleEnabledInputSources:0:'KeyboardLayout Name' string ABC"
+    - "Add :AppleEnabledInputSources: dict"
+    - "Add :AppleEnabledInputSources:1:InputSourceKind string 'Keyboard Layout'"
+    - "Add :AppleEnabledInputSources:1:'KeyboardLayout ID' integer 19458"
+    - "Add :AppleEnabledInputSources:1:'KeyboardLayout Name' string RussianWin"
+    - "Delete :AppleInputSourceHistory"
+    - "Add :AppleInputSourceHistory array"
+    - "Delete :AppleSelectedInputSources"
+    - "Add :AppleSelectedInputSources array"
+  changed_when: false
 
 - name: "Keyboard: use globe key to show emoji panel"
   osx_defaults:
@@ -57,3 +76,10 @@
     key: "AppleFnUsageType"
     type: int
     value: 2
+
+- name: "Keyboard: turn off the language indicator while switching input sources."
+  osx_defaults:
+    domain: "kCFPreferencesAnyApplication"
+    key: "TSMLanguageIndicatorEnabled"
+    type: bool
+    value: false

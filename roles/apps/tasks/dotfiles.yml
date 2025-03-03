@@ -3,6 +3,8 @@
     path: "~/{{ item }}"
     state: touch
     mode: 0755
+    access_time: preserve
+    modification_time: preserve
   loop:
     - .zshrc
     - .zprofile

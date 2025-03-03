@@ -14,7 +14,7 @@
 
 - name: Ensure a job to cleanup DS files
   ansible.builtin.cron:
-    name: "update oh-my-zsh"
+    name: "cleanup DS files"
     minute: "0"
     hour: "12"
     job: "cleanup"

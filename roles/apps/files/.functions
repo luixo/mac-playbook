@@ -16,3 +16,7 @@ digger() {
 killz() {
   sudo kill -9 `ps aux | grep $1 | grep -v grep | awk '{print $2}'`
 }
+
+checkport() {
+  lsof -i tcp:"$@"
+}
