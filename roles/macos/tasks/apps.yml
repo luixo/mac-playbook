@@ -1,13 +1,58 @@
 ---
-- name: Install Homebrew apps
-  shell: brew bundle --file=roles/macos/files/main.bundle
-  register: brew_diff
-  changed_when: '"Installing" in brew_diff.stdout'
+- name: Tap Homebrew repos
+  community.general.homebrew_tap:
+    name: "{{ item }}"
+    sudo_password: "{{ ansible_become_password | default(omit) }}"
+  loop:
+    - localsend/localsend
 
-- name: Install Homebrew apps - Changed output
-  debug:
-    var: brew_diff.stdout
-  when:
-    - brew_diff.changed
-    - not ansible_check_mode
-  changed_when: brew_diff.changed
+- name: Install Homebrew apps
+  community.general.homebrew:
+    name: "{{ item }}"
+    sudo_password: "{{ ansible_become_password | default(omit) }}"
+  loop:
+    - ntfs-3g-mac
+    - act
+    - deno
+    - pinentry-mac
+    - powerlevel10k
+    - jq
+    - docker-credential-helper
+    - git
+    - gpg
+    - pam-reattach
+    - imagemagick
+    - exiftool
+    - nvm
+    - mas
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    sudo_password: "{{ ansible_become_password | default(omit) }}"
+  loop:
+    - iterm2
+    - visual-studio-code
+    - docker
+    - ledger-live
+    - google-chrome
+    - arc
+    - datagrip
+    - mounty
+    - whisky
+    - arq
+    - folx
+    - localsend
+    - notion
+    - zoom
+    - todoist
+    - telegram
+    - elmedia-player
+    - git-credential-manager
+    - slack
+
+- name: Install MAS apps
+  community.general.mas:
+    id: "{{ item }}"
+  loop:
+    - 1451685025 # Wireguard

@@ -3,8 +3,14 @@
 # https://github.com/fabianishere/pam_reattach
 - name: Uncomment pam_tid auth line
   become: true
-  command: sed -ie '/auth       sufficient     pam_tid.so/s/^#//g' /etc/pam.d/sudo_local.template
+  lineinfile:
+    path: /etc/pam.d/sudo_local.template
+    regexp: "pam_tid.so"
+    line: "auth       sufficient     pam_tid.so"
 
 - name: Add pam_reattach auth line
   become: true
-  command: echo "auth       optional       \/opt\/homebrew\/lib\/pam\/pam_reattach.so" >> /etc/pam.d/sudo_local.template
+  lineinfile:
+    path: /etc/pam.d/sudo_local.template
+    regexp: "pam_reattach.so"
+    line: "auth       optional       /opt/homebrew/lib/pam/pam_reattach.so"

@@ -21,6 +21,7 @@
   shell: >-
     gpg --list-secret-keys --keyid-format=long | grep "\[S\]" | head -n 1 | awk '{print $2}' | cut -d '/' -f2
   register: signingkey
+  changed_when: false
 
 - name: "Git: username"
   git_config:
@@ -75,6 +76,8 @@
     path: "{{ git.ignore_file }}"
     mode: 0644
     state: touch
+    access_time: preserve
+    modification_time: preserve
 
 - name: "Ensure ignore lines are set"
   ansible.builtin.lineinfile:
@@ -89,6 +92,8 @@
     path: "{{ git.attributes_file }}"
     mode: 0644
     state: touch
+    access_time: preserve
+    modification_time: preserve
 
 - name: "Add image diff details"
   ansible.builtin.blockinfile:
@@ -111,10 +116,15 @@
     scope: global
     name: alias.diff-image
     value: >-
-      '!f() { cd -- "${GIT_PREFIX:-.}"; GIT_DIFF_IMAGE_ENABLED=1 git diff "$@"; }; f'
+      !f() { cd -- "${GIT_PREFIX:-.}"; GIT_DIFF_IMAGE_ENABLED=1 git diff "$@"; }; f
 
 - name: "Git: image diff command"
   git_config:
     scope: global
     name: diff.image.command
     value: "{{ git.diff_image_location }}/git_diff_image"
+
+- name: "Git: clone diff image repo"
+  ansible.builtin.git:
+    repo: git@github.com:ewanmellor/git-diff-image.git
+    dest: "{{ git.diff_image_location }}"

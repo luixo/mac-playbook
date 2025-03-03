@@ -1,0 +1,96 @@
+apps:
+  pages:
+    - number: 1
+      items:
+        - folder: Defaults
+          pages:
+            - number: 1
+              items:
+                - Mail
+                - Contacts
+                - FaceTime
+                - Messages
+                - Maps
+                - Find My
+                - Photo Booth
+                - Preview
+                - Music
+                - Podcasts
+                - TV
+                - Voice Memos
+                - Weather
+                - Stocks
+                - Books
+                - Dictionary
+                - Freeform
+                - Home
+                - Clock
+                - Siri
+                - News
+                - Screen Sharing
+        - folder: Other
+          pages:
+            - number: 1
+              items:
+                - Shortcuts
+                - QuickTime Player
+                - TextEdit
+                - Grapher
+                - Time Machine
+                - Font Book
+                - Mission Control
+                - Chess
+                - Stickies
+                - Image Capture
+                - VoiceOver Utility
+                - AirPort Utility
+                - Migration Assistant
+                - Terminal
+                - Activity Monitor
+                - Console
+                - Keychain Access
+                - System Information
+                - Automator
+                - Script Editor
+                - Disk Utility
+                - Boot Camp Assistant
+                - Digital Colour Meter
+                - ColorSync Utility
+                - Screenshot
+                - Bluetooth File Exchange
+                - Audio MIDI Setup
+        - System Settings
+        - Print Centre
+        - App Store
+        - Safari
+        - Calendar
+        - Reminders
+        - Notes
+        - Photos
+        - Calculator
+        - Telegram
+        - iTerm
+widgets:
+  pages: []
+dock_items:
+  apps:
+    - /Applications/Arq.app
+    - /Applications/Telegram.app
+    - /Applications/iTerm.app
+    - /Applications/Visual Studio Code.app
+    - /System/Applications/Calculator.app
+    - /System/Applications/Calendar.app
+    - /System/Applications/System Settings.app
+  others:
+    - path: ~/Downloads
+      view: 1
+      sort: 2
+  settings:
+    autohide: false
+    largesize: 80
+    magnification: false
+    minimize-to-application: false
+    mru-spaces: false
+    show-recents: false
+    tilesize: 60
+desktop: {}

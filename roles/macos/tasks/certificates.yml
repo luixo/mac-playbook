@@ -1,0 +1,7 @@
+---
+- name: Download Yandex mongodb certificate
+  become: true
+  ansible.builtin.get_url:
+    url: "https://storage.yandexcloud.net/cloud-certs/CA.pem"
+    dest: ~/.mongodb/root.crt
+    mode: 0644

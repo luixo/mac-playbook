@@ -2,45 +2,94 @@
 
 This playbook bootstraps a fresh Mac to be ready for my personal usage.
 
+## Prerequisites
+
+1. Run MacOS install wizard
+1. Login to iCloud
+1. Login into [Bitwarden Vault](https://vault.bitwarden.com/#/settings/security/security-keys) to obtain an API key
+1. Add Terminal app to Settings -> Privacy and Security -> Full Disk Access
+
 ## Installation
 
-1. Run MacOS install wizard and login to iCloud & App Store.
-1. Run `sudo source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)`.
+```sh
+# Bootstrap
+source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)`
+# Run playbook
+ansible-playbook main.yml --ask-become-pass
+# (wait a bit until Bitwarden password is obtained by the playbook)
+```
 
-## If old machine is not available
+In case you lost the session after bootstrap has finished:
 
-Get data from Arq backup:
+```sh
+# Change directory to playbook's
+cd git/mac-playbook
+# Add homebrew to path
+eval "$(/opt/homebrew/bin/brew shellenv)"
+# Activate python virtual env
+source venv/bin/activate
+```
 
-- Transfer `~/git` (probably skip some repos in `~/git/open-source`) to a new machine.
-- Transfer `~/Documents` to a new machine.
-- Transfer (what's needed) `~/Downloads` to a new machine.
+## After installation
 
-## If old machine is available
+### Password manager
 
-- Get the same data, but from an old machine.
-- Compare changes made to `roles/apps/files` with files from `~`.
+1. Authorize in Arq & adopt the backup
+1. Copy over `~/Library/Application Support/Arc/User Data` to original folder
+1. Open Arc, authorize, enable sync & add Bitwarden extension
+1. Authorize in Bitwarden, proceed with auth from there
 
-## Manual tasks
+### Restore from Arq
 
-- Arc: authorize, set as default browser, enable sync, add extensions: AdBlock, Bitwarden (auth), React Devtools
-- VSCode: authorize, enable settings sync
-- DataGrip: authorize
-- Whisky: download GTPK
-- Outline Manager: authorize (git algo configs dir contains credentials, connect and run `cat /opt/outline/access.txt` to get keys)
-- Outline: add tunnels from Outline Manager
+- `~/git` (probably skip some repos in `~/git/open-source`)
+- `~/Documents` / `~/Downloads` / `~/Desktop`
+
+### Manual tasks
+
+- Install Amnezia VPN (currently not installable via Brew)
+
+Authorize in:
+
+- Arc
+- VSCode (through "enable settings sync")
+- DataGrip
+- Amnezia (from bitwarden)
+- Notion
+- Todoist
+- Telegram
+- Docker (Y.Cloud auth via [token](https://yandex.cloud/ru/docs/container-registry/operations/authentication#user-oauth))
+- Ledger Live
+
+Misc:
+
+- Touch ID: add more fingerprints
 - Wireguard: add tunnels from algo git directory
-- Arq: adopt a backup set, create a new backup plan
-- Notion: authorize
-- Todoist: authorize
-- Slack: authorize
-- Ableton: disable automatic update and generate Authorize.auz
-- Telegram: authorize, "emoji -> turn off 'suggest'", "general -> emoji -> turn off 'emoji autoreplace'" and "general -> interface -> all off", "sound -> off", "send messages as cmd+enter"
-- Ngrok: authorize (get token from website) # ngrok config add-authtoken <TOKEN>
-- Docker: Y.Cloud auth (token from here: https://yandex.cloud/ru/docs/container-registry/operations/authentication#user-oauth)
-- Change screenshots path (cmd + shift + 5 -> choose path)
-- Touch ID - add more fingerprints
-- Open any folder, set "icons" view, cmd+J, use "snap to grid", set "sort by name", click "set as default"
-- Ledger Live: authorize
+- Arc
+  - set as default browser
+  - enable sync (via Arc sync)
+  - add extensions: AdBlock, Bitwarden (auth)
+  - set auto-archive to 30 days
+- Arq: adopt a backup plan (only after detaching it from old machine)
+- GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
+- Apple locator: register
+- Telegram options
+  - emoji -> suggest -> off
+  - emoji -> sticker packs -> suggest instead of stickers -> off
+  - general -> emoji -> emoji autoreplace -> off
+  - general -> interface -> all off
+  - sound -> off
+  - general -> send messages -> as cmd+enter
+  - appearance -> text size 3/7
+- Notion options
+  - Preferences -> Use Command Search -> off
+- DataGrip
+  - import projects from `~/DataGripProjects`
+  - download required drivers
+  - re-enter all the passwords
+
+### Follow-up for next restorations
+
+- Compare changes made to `roles/apps/files` with files from `~`.
 
 ## Cleaning up old Mac
 

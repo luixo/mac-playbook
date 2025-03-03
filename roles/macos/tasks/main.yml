@@ -10,5 +10,8 @@
 - name: Configure OS / app settings
   import_tasks: settings.yml
 
+- name: Setup Playbook itself
+  import_tasks: playbook.yml
+
 - name: Add cron jobs
   import_tasks: cron.yml

@@ -22,6 +22,13 @@
 - name: Configure Finder settings
   import_tasks: settings/finder.yml
 
+- name: Configure Control Center settings
+  import_tasks: settings/control_center.yml
+
+- name: Configure Screen Capture settings
+  import_tasks: settings/screen_capture.yml
+
 - name: Restart affected services
   shell: "killall cfprefsd Dock Finder SystemUIServer TouchBarServer 'Activity Monitor'"
   become: true
+  changed_when: false

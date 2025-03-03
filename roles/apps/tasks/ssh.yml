@@ -5,46 +5,66 @@
     mode: 0700
     state: directory
 
-- name: "Write SSH private key to file"
-  copy:
-    dest: "~/.ssh/{{ ssh.identity }}"
-    mode: 0600
-    force: no
-    content: >
-      {{ lookup('community.general.bitwarden', ssh.bw_key, field=ssh.bw_field, bw_session=bw_session)[0] }}
+- name: "Check SSH private file exists"
+  stat:
+    path: "~/.ssh/{{ ssh.identity }}"
+  register: private_stat_result
 
-- name: "Write SSH public key to file"
-  copy:
-    dest: "~/.ssh/{{ ssh.identity }}.pub"
-    mode: 0644
-    force: no
-    content: >
-      {{ lookup('community.general.bitwarden', ssh.bw_key, field='login', bw_session=bw_session)[0].username }}
+- name: "Download SSH keys"
+  when: private_stat_result.stat.exists == false
+  block:
+    - name: "Write SSH private key to file"
+      copy:
+        dest: "~/.ssh/{{ ssh.identity }}"
+        mode: 0600
+        content: >
+          {{ lookup('community.general.bitwarden', ssh.bw_key, field=ssh.bw_field, bw_session=bw_session)[0] }}
+
+    - name: "Write SSH public key to file"
+      copy:
+        dest: "~/.ssh/{{ ssh.identity }}.pub"
+        mode: 0644
+        content: >
+          {{ lookup('community.general.bitwarden', ssh.bw_key, field='login', bw_session=bw_session)[0].username }}
 
 - name: "Setup SSH config"
-  ansible.builtin.file:
-    path: "~/.ssh/config"
-    mode: 0644
-    state: touch
+  block:
+    - name: "Touch SSH config"
+      ansible.builtin.file:
+        path: "~/.ssh/config"
+        mode: 0644
+        state: touch
+        access_time: preserve
+        modification_time: preserve
 
-- name: "Ensure AddKeysToAgent setting is set"
-  ansible.builtin.lineinfile:
-    path: "~/.ssh/config"
-    line: "AddKeysToAgent yes"
-    regexp: ^AddKeysToAgent
+    - name: "Ensure AddKeysToAgent setting is set"
+      ansible.builtin.lineinfile:
+        path: "~/.ssh/config"
+        line: "AddKeysToAgent yes"
+        regexp: ^AddKeysToAgent
 
-- name: "Ensure UseKeychain setting is set"
-  ansible.builtin.lineinfile:
-    path: "~/.ssh/config"
-    line: "UseKeychain yes"
-    regexp: ^UseKeychain
+    - name: "Ensure UseKeychain setting is set"
+      ansible.builtin.lineinfile:
+        path: "~/.ssh/config"
+        line: "UseKeychain yes"
+        regexp: ^UseKeychain
 
-- name: "Ensure identity file is set in config"
-  ansible.builtin.lineinfile:
-    path: "~/.ssh/config"
-    line: "IdentityFile ~/.ssh/{{ ssh.identity }}"
-    regexp: "^IdentityFile ~/.ssh/{{ ssh.identity }}$"
+    - name: "Ensure identity file is set in config"
+      ansible.builtin.lineinfile:
+        path: "~/.ssh/config"
+        line: "IdentityFile ~/.ssh/{{ ssh.identity }}"
+        regexp: "^IdentityFile ~/.ssh/{{ ssh.identity }}$"
 
-- name: "Add identity to ssh agent"
-  shell: >-
-    ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}
+- name: "Register SSH identity"
+  block:
+    - name: "List identities"
+      shell: >-
+        ssh-add -L
+      ignore_errors: true
+      register: ssh_list_result
+      changed_when: false
+
+    - name: "Add identity to ssh agent"
+      when: ssh_list_result.rc != 0
+      shell: >-
+        ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}
