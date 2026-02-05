@@ -28,7 +28,7 @@ fi
 # Clone playbook to a local machine
 echo "Verifying playbook is downloaded..."
 if [[ ! -d $playbook_repo_dir ]]; then
-  mkdir ~/git
+  mkdir -p ~/git
   git clone https://github.com/luixo/mac-playbook.git $playbook_repo_dir
 fi
 
@@ -48,22 +48,14 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Install all apps that are immediately required for bootstrapping. 
 echo "Checking for immediately installed apps"
 export HOMEBREW_CASK_OPTS='--no-quarantine'
-# TODO: add bitwarden-cli when "status" command is fixed
-# https://github.com/bitwarden/clients/issues/9254
-brew install --quiet jq ansible python pyenv python-setuptools virtualenv
-
-# Temporary: download working bw-cli version
-bw_cli_temp_location=/tmp/bw-macos-2024.1.0.zip
-bw_cli_executable=/usr/local/bin/bw
-if [ ! -f $bw_cli_executable ]; then
-  curl -L -o $bw_cli_temp_location https://github.com/bitwarden/clients/releases/download/cli-v2024.1.0/bw-macos-2024.1.0.zip
-  unzip -d /usr/local/bin $bw_cli_temp_location
-  chmod +x $bw_cli_executable
-fi
+# Install sudo brew apps
+brew tap gromgit/fuse && brew install macfuse
+# Install regular brew apps
+brew install --quiet jq ansible python pyenv python-setuptools virtualenv bitwarden-cli
 
 # Login to Bitwarden CLI
 echo "Checking for Bitwarden CLI..."
-output=$(bw lock 2>&1)
+output=$(bw lock || true)
 unlock_count=0
 unlock_max_attempts=10
 while [[ ! "$output" == *"Your vault is locked"* ]] || [[ $unlock_count -eq $unlock_max_attempts ]]; do
@@ -73,7 +65,7 @@ while [[ ! "$output" == *"Your vault is locked"* ]] || [[ $unlock_count -eq $unl
   vared -p "Enter your client secret: " -c BW_CLIENTSECRET
   export BW_CLIENTID
   export BW_CLIENTSECRET
-  output=$(bw login --apikey 2>&1)
+  output=$(bw login --apikey || true)
   if [[ ! "$output" == *"You are logged in"* ]]; then
     echo "Wrong credentials, please try again"
     (( unlock_count++ ))
@@ -112,10 +104,14 @@ if [[ ! -d venv ]]; then
 fi
 
 # Install ansible requirements
-ansible-galaxy install -r requirements.yml
+echo "Installing Ansible requirements..."
+if [[ ! -d '.ansible/collections' ]]; then
+  ansible-galaxy collection install -r requirements.yml
+  patch < patches/bitwarden.patch
+fi
 
 echo ""
 echo "Finished bootstrapping!"
-echo "Run \`ansible-playbook main.yml --ask-become-pass\` to engage Ansible playbook"
+echo "Run \`ansible-playbook main.yml --ask-vault-pass\` with vault password (Bitwarden master password) to engage Ansible playbook"
 echo "If session is lost - reenable prerequisites for the run: \`cd $playbook_repo_dir && eval \"\$(/opt/homebrew/bin/brew shellenv)\" && source venv/bin/activate\`"
 echo ""

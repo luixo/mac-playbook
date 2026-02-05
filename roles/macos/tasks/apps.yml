@@ -2,17 +2,14 @@
 - name: Tap Homebrew repos
   community.general.homebrew_tap:
     name: "{{ item }}"
-    sudo_password: "{{ ansible_become_password | default(omit) }}"
   loop:
     - localsend/localsend
 
 - name: Install Homebrew apps
   community.general.homebrew:
     name: "{{ item }}"
-    sudo_password: "{{ ansible_become_password | default(omit) }}"
   loop:
     - ntfs-3g-mac
-    - act
     - deno
     - pinentry-mac
     - powerlevel10k
@@ -34,7 +31,6 @@
     - iterm2
     - visual-studio-code
     - docker
-    - ledger-live
     - google-chrome
     - arc
     - datagrip
@@ -42,7 +38,6 @@
     - whisky
     - arq
     - folx
-    - localsend
     - notion
     - zoom
     - todoist
@@ -50,9 +45,4 @@
     - elmedia-player
     - git-credential-manager
     - slack
-
-- name: Install MAS apps
-  community.general.mas:
-    id: "{{ item }}"
-  loop:
-    - 1451685025 # Wireguard
+    - amneziavpn

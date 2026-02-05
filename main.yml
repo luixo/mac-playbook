@@ -4,15 +4,10 @@
 
   vars:
     downloads: ~/.ansible-downloads/
+  vars_files:
+    - vault.yml
 
   pre_tasks:
-    - name: Input Bitwarden password to unlock
-      ansible.builtin.pause:
-        prompt: "Enter Bitwarden master password"
-        echo: no
-      register: bw_master_password
-      no_log: true
-      tags: ["always"]
     - name: Setup Bitwarden
       import_tasks: tasks/bitwarden.yml
       tags: ["always"]

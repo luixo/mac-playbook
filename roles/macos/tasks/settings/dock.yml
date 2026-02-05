@@ -46,3 +46,7 @@
     key: "showAppExposeGestureEnabled"
     type: int
     value: 1
+
+- name: "Dock: apps"
+  include_role:
+    name: geerlingguy.mac.dock

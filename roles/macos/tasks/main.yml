@@ -1,9 +1,6 @@
 - name: Setup touch-based sudo customization
   import_tasks: auth.yml
 
-- name: Install priority applications
-  import_tasks: pre-apps.yml
-
 - name: Install applications
   import_tasks: apps.yml
 
@@ -15,3 +12,7 @@
 
 - name: Add cron jobs
   import_tasks: cron.yml
+
+- name: Include homebrew role
+  include_role:
+    name: geerlingguy.mac.homebrew

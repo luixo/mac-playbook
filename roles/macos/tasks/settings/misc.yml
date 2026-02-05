@@ -5,3 +5,10 @@
     type: array
     value: >-
       { "en_US" = 0; "ru_RU" = 1; }
+
+- name: "Apple Intelligence: turn off"
+  osx_defaults:
+    domain: "com.apple.CloudSubscriptionFeatures.optIn"
+    key: "545129924"
+    type: bool
+    value: false

@@ -1,0 +1,26 @@
+--- ansible_collections/community/general/plugins/lookup/bitwarden.py	2026-02-06 03:10:35
++++ ansible_collections/community/general/plugins/lookup/bitwarden copy.py	2026-02-06 03:09:32
+@@ -118,6 +118,8 @@
+   elements: list
+ """
+ 
++import os
++
+ from subprocess import PIPE, Popen
+ 
+ from ansible.errors import AnsibleError, AnsibleOptionsError
+@@ -154,10 +156,12 @@
+         return decoded["status"] == "unlocked"
+ 
+     def _run(self, args, stdin=None, expected_rc=0):
++        bw_env = os.environ.copy()
+         if self.session:
+             args += ["--session", self.session]
+-
+-        p = Popen([self.cli_path] + args, stdout=PIPE, stderr=PIPE, stdin=PIPE)
++            bw_env["BW_SESSION"] = self.session
++        
++        p = Popen([self.cli_path] + args, env=bw_env, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+         out, err = p.communicate(to_bytes(stdin))
+         rc = p.wait()
+         if rc != expected_rc:

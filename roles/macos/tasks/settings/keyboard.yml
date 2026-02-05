@@ -12,6 +12,19 @@
     type: int
     value: 5
 
+- name: "Keyboard: holding a key should repeat a key"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "ApplePressAndHoldEnabled"
+    state: absent
+
+- name: "Keyboard: don't add period with double space"
+  osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "NSAutomaticPeriodSubstitutionEnabled"
+    type: bool
+    value: false
+
 # TODO: migrate to osx_defaults when it supports dictionaries
 # https://github.com/ansible-collections/community.general/issues/238
 - name: "Keyboard: add 'next input source' hotkey"
@@ -64,10 +77,6 @@
     - "Add :AppleEnabledInputSources:1:InputSourceKind string 'Keyboard Layout'"
     - "Add :AppleEnabledInputSources:1:'KeyboardLayout ID' integer 19458"
     - "Add :AppleEnabledInputSources:1:'KeyboardLayout Name' string RussianWin"
-    - "Delete :AppleInputSourceHistory"
-    - "Add :AppleInputSourceHistory array"
-    - "Delete :AppleSelectedInputSources"
-    - "Add :AppleSelectedInputSources array"
   changed_when: false
 
 - name: "Keyboard: use globe key to show emoji panel"

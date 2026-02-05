@@ -8,15 +8,15 @@ This playbook bootstraps a fresh Mac to be ready for my personal usage.
 1. Login to iCloud
 1. Login into [Bitwarden Vault](https://vault.bitwarden.com/#/settings/security/security-keys) to obtain an API key
 1. Add Terminal app to Settings -> Privacy and Security -> Full Disk Access
+1. Run `sudo echo 1` at least once to get access to sudo from your account
 
 ## Installation
 
 ```sh
-# Bootstrap
-source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)`
-# Run playbook
-ansible-playbook main.yml --ask-become-pass
-# (wait a bit until Bitwarden password is obtained by the playbook)
+# Bootstrap (wait for sudo password prompt)
+source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)
+# Run playbook with vault password (Bitwarden master password)
+ansible-playbook main.yml --ask-vault-pass
 ```
 
 In case you lost the session after bootstrap has finished:
@@ -32,6 +32,8 @@ source venv/bin/activate
 
 ## After installation
 
+Some settings apply only after restart
+
 ### Password manager
 
 1. Authorize in Arq & adopt the backup
@@ -46,8 +48,6 @@ source venv/bin/activate
 
 ### Manual tasks
 
-- Install Amnezia VPN (currently not installable via Brew)
-
 Authorize in:
 
 - Arc
@@ -57,21 +57,24 @@ Authorize in:
 - Notion
 - Todoist
 - Telegram
-- Docker (Y.Cloud auth via [token](https://yandex.cloud/ru/docs/container-registry/operations/authentication#user-oauth))
-- Ledger Live
+- Docker
 
 Misc:
 
-- Touch ID: add more fingerprints
-- Wireguard: add tunnels from algo git directory
+- Set default profile in iTerm2
+- Touch ID: add more fingerprints (left & right index & right thumb)
+- Wireguard: install from MAS & add tunnel from Bitwarden (VPN ru)
 - Arc
   - set as default browser
   - enable sync (via Arc sync)
-  - add extensions: AdBlock, Bitwarden (auth)
+  - add extensions: Bitwarden, Adguard
   - set auto-archive to 30 days
 - Arq: adopt a backup plan (only after detaching it from old machine)
 - GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
+- Bitwarden settings:
+  - autocomplete
+    - turn off browser autocomplete
 - Telegram options
   - emoji -> suggest -> off
   - emoji -> sticker packs -> suggest instead of stickers -> off
