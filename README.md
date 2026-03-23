@@ -13,7 +13,7 @@ This playbook bootstraps a fresh Mac to be ready for my personal usage.
 ## Installation
 
 ```sh
-# Bootstrap (wait for sudo password prompt)
+# Bootstrap (wait for sudo password prompt); if it fails on sudo error, run `sudo echo 1` and re-run script afterwards
 source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)
 # Run playbook with vault password (Bitwarden master password)
 ansible-playbook main.yml --ask-vault-pass
