@@ -1,5 +1,5 @@
 --- ansible_collections/community/general/plugins/lookup/bitwarden.py	2026-02-06 03:10:35
-+++ ansible_collections/community/general/plugins/lookup/bitwarden copy.py	2026-02-06 03:09:32
++++ ansible_collections/community/general/plugins/lookup/bitwarden.py	2026-02-06 03:09:32
 @@ -118,6 +118,8 @@
    elements: list
  """
