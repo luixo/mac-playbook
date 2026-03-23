@@ -48,8 +48,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Install all apps that are immediately required for bootstrapping. 
 echo "Checking for immediately installed apps"
 export HOMEBREW_CASK_OPTS='--no-quarantine'
-# Install sudo brew apps
-brew tap gromgit/fuse && brew install macfuse
 # Install regular brew apps
 brew install --quiet jq ansible python pyenv python-setuptools virtualenv bitwarden-cli
 

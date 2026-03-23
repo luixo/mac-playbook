@@ -9,7 +9,6 @@
   community.general.homebrew:
     name: "{{ item }}"
   loop:
-    - ntfs-3g-mac
     - deno
     - pinentry-mac
     - powerlevel10k
@@ -46,3 +45,4 @@
     - git-credential-manager
     - slack
     - amneziavpn
+    - tailscale-app
