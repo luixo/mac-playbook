@@ -104,7 +104,8 @@ fi
 # Install ansible requirements
 echo "Installing Ansible requirements..."
 if [[ ! -d '.ansible/collections' ]]; then
-  ansible-galaxy collection install -r requirements.yml
+  # Remove -f when patch is not needed anymore
+  ansible-galaxy collection install -r requirements.yml -f
   patch < patches/bitwarden.patch
 fi
 
