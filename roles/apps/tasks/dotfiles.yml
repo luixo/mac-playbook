@@ -20,6 +20,15 @@
     - .aliases
     - .functions
 
+- name: Copy executable dotfiles to home dir
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "~/{{ item }}"
+    mode: 0744
+    force: true
+  loop:
+    - .restore.sh
+
 - name: Add helper files to .zshrc
   ansible.builtin.blockinfile:
     path: "~/.zshrc"

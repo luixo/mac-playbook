@@ -32,53 +32,9 @@ source venv/bin/activate
 
 ## After installation
 
-Some settings apply only after restart
-
-### Connecting to backup source
-
-There are several options to get initial backup files to the laptop
-
-- Get dotfiles backup from previous laptop (if available)
-- Get dotfiles from NAS (if available)
-- Get dotfiles from Yandex S3 (if available)
-- Get dotfiles from Scaleway S3
-
-Getting restic backup from NAS requires:
-
-```
-export RESTIC_REPOSITORY=sftp:nas:/mnt/user/backups
-```
-
-Getting restic backup from Yandex S3 requires:
-
-```
-export RESTIC_REPOSITORY=s3://storage.yandexcloud.net/luixo-backups
-export AWS_ACCESS_KEY_ID=${YA_AWS_ACCESS_KEY_ID}
-export AWS_SECRET_ACCESS_KEY=${YA_AWS_SECRET_ACCESS_KEY}
-```
-
-Getting restic backup from Scaleway S3 requires:
-
-```
-export RESTIC_REPOSITORY=s3://s3.fr-par.scw.cloud/luixo-archive/restic
-export AWS_ACCESS_KEY_ID=${SCW_AWS_ACCESS_KEY_ID}
-export AWS_SECRET_ACCESS_KEY=${SCW_AWS_SECRET_ACCESS_KEY}
-```
-
-### Backup restoration
-
-1. Restore latest dotFiles snapshot from a given source
-
-```
-~/.local/share/backrest/restic restore latest --tag 'plan:dotFiles' --target /tmp/restored --include '/Users/luixo/.config/backrest'
-mv -f /tmp/restored/Users/luixo/.config/backrest/* ~/.config/backrest/
-rm -r /tmp/restored`
-```
-
-1. Restart Backrest: `brew services restart backrest`
-1. Go to [Backrest](http://localhost:9898/) UI
-1. Restore everything else (`dotFiles` needed, `git`, `documents`)
-1. Look through `~/.downloads-list` for missing files and act accordingly
+1. Run `~/.restore.sh <target>` to run base restoration process (target can be: `nas`, `yandex` or `scaleway`)
+1. Move files from `~/Downloads/restored` to proper places
+1. Reboot
 
 ### Password manager
 
