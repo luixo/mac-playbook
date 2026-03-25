@@ -64,6 +64,7 @@ Misc:
   - set as default browser
   - add extensions: Adguard
   - set auto-archive to 30 days
+  - go to `arc://settings/` and turn off password / address saving
 - GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
 - Bitwarden settings:
@@ -83,6 +84,8 @@ Misc:
   - import projects from `~/DataGripProjects`
   - download required drivers
   - re-enter all the passwords
+- Tailscale
+  - launch at login
 - Manual dock / widget / launchpad restoration (with lporg.yaml hints) until alternative to lporg is found
 
 ### Follow-up for next restorations
