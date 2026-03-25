@@ -68,14 +68,24 @@
     type: bool
     value: true
 
-# TODO: migrate to osx_defaults when it supports dictionaries
-# https://github.com/ansible-collections/community.general/issues/238
 - name: "Finder: snap to grid"
   shell: >-
     /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.Finder.plist
   loop:
     - "Set :StandardViewSettings:IconViewSettings:arrangeBy name"
   changed_when: false
+
+# TODO: Uncomment this and remove a few previous tasks when we can put proper values in dicts
+# https://github.com/ansible-collections/community.general/issues/238#issuecomment-4126880219
+# - name: "Finder: snap to grid"
+#   osx_defaults:
+#     domain: "com.apple.Finder"
+#     key: "StandardViewSettings"
+#     type: dict
+#     dict_mode: add
+#     value:
+#       IconViewSettings:
+#         arrangeBy: name
 
 - name: "Finder: sort by name"
   osx_defaults:
