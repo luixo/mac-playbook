@@ -1,5 +1,5 @@
 playbook:
-  owner: "luixo"
+  owner: "{{ owner }}"
   repo: "mac-playbook"
 dockutil_install: true
 dockitems_persist:

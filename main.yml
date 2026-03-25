@@ -4,6 +4,7 @@
 
   vars:
     downloads: ~/.ansible-downloads/
+    owner: luixo
   vars_files:
     - vault.yml
 
