@@ -34,17 +34,57 @@ source venv/bin/activate
 
 Some settings apply only after restart
 
+### Connecting to backup source
+
+There are several options to get initial backup files to the laptop
+
+- Get dotfiles backup from previous laptop (if available)
+- Get dotfiles from NAS (if available)
+- Get dotfiles from Yandex S3 (if available)
+- Get dotfiles from Scaleway S3
+
+Getting restic backup from NAS requires:
+
+```
+export RESTIC_REPOSITORY=sftp:nas:/mnt/user/backups
+```
+
+Getting restic backup from Yandex S3 requires:
+
+```
+export RESTIC_REPOSITORY=s3://storage.yandexcloud.net/luixo-backups
+export AWS_ACCESS_KEY_ID=${YA_AWS_ACCESS_KEY_ID}
+export AWS_SECRET_ACCESS_KEY=${YA_AWS_SECRET_ACCESS_KEY}
+```
+
+Getting restic backup from Scaleway S3 requires:
+
+```
+export RESTIC_REPOSITORY=s3://s3.fr-par.scw.cloud/luixo-archive/restic
+export AWS_ACCESS_KEY_ID=${SCW_AWS_ACCESS_KEY_ID}
+export AWS_SECRET_ACCESS_KEY=${SCW_AWS_SECRET_ACCESS_KEY}
+```
+
+### Backup restoration
+
+1. Restore latest dotFiles snapshot from a given source
+
+```
+~/.local/share/backrest/restic restore latest --tag 'plan:dotFiles' --target /tmp/restored --include '/Users/luixo/.config/backrest'
+mv -f /tmp/restored/Users/luixo/.config/backrest/* ~/.config/backrest/
+rm -r /tmp/restored`
+```
+
+1. Restart Backrest: `brew services restart backrest`
+1. Go to [Backrest](http://localhost:9898/) UI
+1. Restore everything else (`dotFiles` needed, `git`, `documents`)
+1. Look through `~/.downloads-list` for missing files and act accordingly
+
 ### Password manager
 
-1. Authorize in Arq & adopt the backup
 1. Copy over `~/Library/Application Support/Arc/User Data` to original folder
-1. Open Arc, authorize, enable sync & add Bitwarden extension
+1. Open Arc, authorize, enable sync (via Arc sync) & add Bitwarden extension
 1. Authorize in Bitwarden, proceed with auth from there
-
-### Restore from Arq
-
-- `~/git` (probably skip some repos in `~/git/open-source`)
-- `~/Documents` / `~/Downloads` / `~/Desktop`
 
 ### Manual tasks
 
@@ -66,10 +106,8 @@ Misc:
 - Wireguard: install from MAS & add tunnel from Bitwarden (VPN ru)
 - Arc
   - set as default browser
-  - enable sync (via Arc sync)
-  - add extensions: Bitwarden, Adguard
+  - add extensions: Adguard
   - set auto-archive to 30 days
-- Arq: adopt a backup plan (only after detaching it from old machine)
 - GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
 - Bitwarden settings:
@@ -89,6 +127,7 @@ Misc:
   - import projects from `~/DataGripProjects`
   - download required drivers
   - re-enter all the passwords
+- Manual dock / widget / launchpad restoration (with lporg.yaml hints) until alternative to lporg is found
 
 ### Follow-up for next restorations
 

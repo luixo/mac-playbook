@@ -1,0 +1,13 @@
+---
+- name: Add restic password to .zshrc
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} Restic environment variables"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      export RESTIC_PASSWORD={{ lookup('community.general.bitwarden', restic.password.key, field=restic.password.id, bw_session=bw_session)[0] }}
+      export YA_AWS_ACCESS_KEY_ID={{ lookup('community.general.bitwarden', restic.ya_s3.key, field=restic.ya_s3.id, bw_session=bw_session)[0] }}
+      export YA_AWS_SECRET_ACCESS_KEY={{ lookup('community.general.bitwarden', restic.ya_s3.key, field=restic.ya_s3.access_key, bw_session=bw_session)[0] }}
+      export SWC_AWS_ACCESS_KEY_ID={{ lookup('community.general.bitwarden', restic.swc_s3.key, field=restic.swc_s3.id, bw_session=bw_session)[0] }}
+      export SWC_AWS_SECRET_ACCESS_KEY={{ lookup('community.general.bitwarden', restic.swc_s3.key, field=restic.swc_s3.access_key, bw_session=bw_session)[0] }}

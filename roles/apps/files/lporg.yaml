@@ -74,13 +74,14 @@ widgets:
   pages: []
 dock_items:
   apps:
-    - /Applications/Arq.app
+    - /Applications/Arc.app
+    - /System/Applications/Mail.app
     - /Applications/Telegram.app
     - /Applications/iTerm.app
     - /Applications/Visual Studio Code.app
-    - /System/Applications/Calculator.app
-    - /System/Applications/Calendar.app
     - /System/Applications/System Settings.app
+    - /System/Applications/Calendar.app
+    - /Applications/Slack.app
   others:
     - path: ~/Downloads
       view: 1

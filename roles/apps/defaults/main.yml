@@ -18,3 +18,15 @@ gpg:
   bw_key: "GPG ECDSA key MacOS"
 screenshots:
   dir: "~/Desktop/screenshots"
+restic:
+  password:
+    key: "Backrest"
+    id: "Backup password"
+  ya_s3:
+    key: "Yandex"
+    id: "S3 key id"
+    access_key: "S3 access key"
+  swc_s3:
+    key: "Scaleway"
+    id: "S3 key id"
+    access_key: "S3 access key"

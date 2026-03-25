@@ -33,3 +33,6 @@
 
 - name: Setup VSCode
   import_tasks: vscode.yml
+
+- name: Setup Backup environment
+  import_tasks: backup.yml

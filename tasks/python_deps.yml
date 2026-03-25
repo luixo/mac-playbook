@@ -20,6 +20,7 @@
     - pip
     - docker-py
     - requests
+    - paramiko
   become: true
 - name: "Tell subsequent tasks to use our deploy virtualenv"
   set_fact:

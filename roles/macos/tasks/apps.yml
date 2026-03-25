@@ -4,6 +4,7 @@
     name: "{{ item }}"
   loop:
     - localsend/localsend
+    - garethgeorge/homebrew-backrest-tap
 
 - name: Install Homebrew apps
   community.general.homebrew:
@@ -21,6 +22,7 @@
     - exiftool
     - nvm
     - mas
+    - backrest
 
 - name: Install Homebrew casks
   community.general.homebrew_cask:
@@ -35,7 +37,6 @@
     - datagrip
     - mounty
     - whisky
-    - arq
     - folx
     - notion
     - zoom
