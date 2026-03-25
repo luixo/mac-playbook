@@ -68,3 +68,10 @@
       when: ssh_list_result.rc != 0
       shell: >-
         ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}
+
+- name: "Prepopulate files"
+  block:
+    - name: Add Github server to known_hosts
+      ansible.builtin.known_hosts:
+        name: github.com
+        key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
