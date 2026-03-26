@@ -45,3 +45,22 @@
     - name: Load job
       ansible.builtin.command: >
         launchctl bootstrap gui/{{ current_uid.stdout }} ~/Library/LaunchAgents/{{ restic.job_name }}.plist
+
+- name: Provide variables for Backrest UI
+  block:
+    - name: Get Backrest current dir
+      ansible.builtin.command: echo "$(brew --cellar backrest)/$(brew list --versions backrest | awk '{print $2}')"/homebrew.mxcl.backrest.plist
+      register: backrest_plist
+      changed_when: false
+
+    - name: Ensure plist contains required structure
+      community.general.plist:
+        path: "{{ backrest_plist }}"
+        state: present
+        values:
+          EnvironmentVariables:
+            RESTIC_PASSWORD_COMMAND: "security find-generic-password -s {{ restic.password.keychain_id }} -w"
+            YA_AWS_ACCESS_KEY_ID: "{{ lookup('community.general.bitwarden', restic.ya_s3.bw_key, field=restic.ya_s3.key_id, bw_session=bw_session)[0] }}"
+            YA_AWS_SECRET_ACCESS_KEY: "{{ lookup('community.general.bitwarden', restic.ya_s3.bw_key, field=restic.ya_s3.access_key, bw_session=bw_session)[0] }}"
+            SWC_AWS_ACCESS_KEY_ID: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.key_id, bw_session=bw_session)[0] }}"
+            SWC_AWS_SECRET_ACCESS_KEY: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.access_key, bw_session=bw_session)[0] }}"

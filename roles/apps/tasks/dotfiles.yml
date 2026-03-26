@@ -20,10 +20,10 @@
     - .aliases
     - .functions
 
-- name: Copy executable dotfiles to home dir
+- name: Copy executable scripts to home dir
   ansible.builtin.copy:
     src: "{{ role_path }}/files/{{ item }}"
-    dest: "~/{{ item }}"
+    dest: "~/.scripts/{{ item }}"
     mode: 0744
     force: true
   loop:

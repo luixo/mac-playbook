@@ -32,7 +32,7 @@ source venv/bin/activate
 
 ## After installation
 
-1. Run `~/.restore.sh <target>` to run base restoration process (target can be: `nas`, `yandex` or `scaleway`)
+1. Run `~/.scripts/.restore.sh <target>` to run base restoration process (target can be: `nas`, `yandex` or `scaleway`)
 1. Move files from `~/Downloads/restored` to proper places
 1. Reboot
 

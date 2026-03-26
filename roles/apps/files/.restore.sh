@@ -2,6 +2,7 @@
 
 brew services start backrest
 
+export RESTIC_PASSWORD=$(security find-generic-password -s restic_backup_password -w)
 # Check RESTIC_PASSWORD
 if [[ -z "$RESTIC_PASSWORD" ]]; then
   echo "Error: RESTIC_PASSWORD is not set, you need to restart the shell."
@@ -19,21 +20,21 @@ case "$REPO_CHOICE" in
     ;;
   yandex)
     export RESTIC_REPOSITORY="s3://storage.yandexcloud.net/luixo-backups"
-    if [[ -z "$YA_AWS_ACCESS_KEY_ID" || -z "$YA_AWS_SECRET_ACCESS_KEY" ]]; then
-        echo "Error: YA_AWS_ACCESS_KEY_ID or YA_AWS_SECRET_ACCESS_KEY is not set, you need to set them."
+    export AWS_ACCESS_KEY_ID=$(security find-generic-password -s yandex_s3_key -g 2>&1 | grep '"acct"' | sed -E 's/.*<blob>="(.*)"/\1/')
+    export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s yandex_s3_key -w)
+    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+        echo "Error: AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY is not set, you need to set them."
         exit 1
     fi
-    export AWS_ACCESS_KEY_ID=${YA_AWS_ACCESS_KEY_ID}
-    export AWS_SECRET_ACCESS_KEY=${YA_AWS_SECRET_ACCESS_KEY}
     ;;
   scaleway)
     export RESTIC_REPOSITORY="s3://s3.fr-par.scw.cloud/luixo-archive/restic"
-    if [[ -z "$SCW_AWS_ACCESS_KEY_ID" || -z "$SCW_AWS_SECRET_ACCESS_KEY" ]]; then
-        echo "Error: SCW_AWS_ACCESS_KEY_ID or SCW_AWS_SECRET_ACCESS_KEY is not set, you need to set them."
+    export AWS_ACCESS_KEY_ID=$(security find-generic-password -s scaleway_s3_key -g 2>&1 | grep '"acct"' | sed -E 's/.*<blob>="(.*)"/\1/')
+    export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s scaleway_s3_key -w)
+    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+        echo "Error: AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY is not set, you need to set them."
         exit 1
     fi
-    export AWS_ACCESS_KEY_ID=${SCW_AWS_ACCESS_KEY_ID}
-    export AWS_SECRET_ACCESS_KEY=${SCW_AWS_SECRET_ACCESS_KEY}
     ;;
   *)
     echo "Invalid repository choice: $REPO_CHOICE. Must be one of: nas, yandex, scaleway"
