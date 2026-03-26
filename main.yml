@@ -14,6 +14,7 @@
       tags: ["always"]
     - name: Include Python dependency task
       import_tasks: tasks/python_deps.yml
+      tags: ["always"]
 
   roles:
     - role: macos
