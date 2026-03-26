@@ -54,6 +54,7 @@ Authorize in:
 - Todoist
 - Telegram
 - Docker
+- DaisyDisk (lookup in email)
 
 Misc:
 
