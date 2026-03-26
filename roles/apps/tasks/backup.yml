@@ -1,13 +1,47 @@
 ---
-- name: Add restic password to .zshrc
-  ansible.builtin.blockinfile:
-    path: "~/.zshrc"
-    marker: "# {mark} Restic environment variables"
-    prepend_newline: true
-    append_newline: true
-    block: |
-      export RESTIC_PASSWORD={{ lookup('community.general.bitwarden', restic.password.key, field=restic.password.id, bw_session=bw_session)[0] }}
-      export YA_AWS_ACCESS_KEY_ID={{ lookup('community.general.bitwarden', restic.ya_s3.key, field=restic.ya_s3.id, bw_session=bw_session)[0] }}
-      export YA_AWS_SECRET_ACCESS_KEY={{ lookup('community.general.bitwarden', restic.ya_s3.key, field=restic.ya_s3.access_key, bw_session=bw_session)[0] }}
-      export SWC_AWS_ACCESS_KEY_ID={{ lookup('community.general.bitwarden', restic.swc_s3.key, field=restic.swc_s3.id, bw_session=bw_session)[0] }}
-      export SWC_AWS_SECRET_ACCESS_KEY={{ lookup('community.general.bitwarden', restic.swc_s3.key, field=restic.swc_s3.access_key, bw_session=bw_session)[0] }}
+- name: Add backup keys to keychain
+  vars:
+    laptop_password: "{{ lookup('community.general.bitwarden', laptop.bw_key, field='password', bw_session=bw_session)[0] }}"
+  block:
+    - name: Store backup password
+      community.general.keyring:
+        keyring_password: "{{ laptop_password }}"
+        service: "{{ restic.password.keychain_id }}"
+        username: restic
+        password: "{{ lookup('community.general.bitwarden', restic.password.bw_key, field=restic.password.key_id, bw_session=bw_session)[0] }}"
+
+    - name: Store Yandex S3 keys
+      community.general.keyring:
+        keyring_password: "{{ laptop_password }}"
+        service: "{{ restic.ya_s3.keychain_id }}"
+        username: "{{ lookup('community.general.bitwarden', restic.ya_s3.bw_key, field=restic.ya_s3.key_id, bw_session=bw_session)[0] }}"
+        password: "{{ lookup('community.general.bitwarden', restic.ya_s3.bw_key, field=restic.ya_s3.access_key, bw_session=bw_session)[0] }}"
+
+    - name: Store Scaleway S3 keys
+      community.general.keyring:
+        keyring_password: "{{ laptop_password }}"
+        service: "{{ restic.swc_s3.keychain_id }}"
+        username: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.key_id, bw_session=bw_session)[0] }}"
+        password: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.access_key, bw_session=bw_session)[0] }}"
+
+- name: Add backup status job
+  block:
+    - name: Copy plist file to LaunchAgents
+      ansible.builtin.copy:
+        src: "{{ role_path }}/files/backup_job.plist"
+        dest: "~/Library/LaunchAgents/{{ restic.job_name }}.plist"
+        mode: 0744
+
+    - name: Get current user UID
+      ansible.builtin.command: id -u
+      register: current_uid
+      changed_when: false
+
+    - name: Unload job if already loaded (safe reload)
+      ansible.builtin.command: >
+        launchctl bootout gui/{{ current_uid.stdout }} ~/Library/LaunchAgents/{{ restic.job_name }}.plist
+      ignore_errors: true
+
+    - name: Load job
+      ansible.builtin.command: >
+        launchctl bootstrap gui/{{ current_uid.stdout }} ~/Library/LaunchAgents/{{ restic.job_name }}.plist

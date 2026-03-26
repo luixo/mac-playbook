@@ -21,6 +21,7 @@
     - docker-py
     - requests
     - paramiko
+    - keyring
   become: true
 - name: "Tell subsequent tasks to use our deploy virtualenv"
   set_fact:

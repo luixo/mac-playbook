@@ -16,17 +16,23 @@ ssh:
 gpg:
   owner_email: lexx92@mail.ru
   bw_key: "GPG ECDSA key MacOS"
+laptop:
+  bw_key: "Laptop (MacOS)"
 screenshots:
   dir: "~/Desktop/screenshots"
 restic:
+  job_name: "me.luixo.backup_notify"
   password:
-    key: "Backrest"
-    id: "Backup password"
+    keychain_id: "restic_backup_password"
+    bw_key: "Backrest"
+    key_id: "Backup password"
   ya_s3:
-    key: "Yandex"
-    id: "S3 key id"
+    keychain_id: "yandex_s3_key"
+    bw_key: "Yandex"
+    key_id: "S3 key id"
     access_key: "S3 access key"
   swc_s3:
-    key: "Scaleway"
-    id: "S3 key id"
+    keychain_id: "scaleway_s3_key"
+    bw_key: "Scaleway"
+    key_id: "S3 key id"
     access_key: "S3 access key"

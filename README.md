@@ -88,6 +88,7 @@ Misc:
 - Tailscale
   - launch at login
 - Manual dock / widget / launchpad restoration (with lporg.yaml hints) until alternative to lporg is found
+- Mark ACL in keychain as open to everyone for keys: lookup `keychain_id` in this repo for the keys
 
 ### Follow-up for next restorations
 
