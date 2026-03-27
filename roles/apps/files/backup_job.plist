@@ -12,6 +12,9 @@
       <string>/Users/luixo/.scripts/notify-backup-status/main.ts</string>
     </array>
 
+    <key>RunAtLoad</key>
+    <true/>
+
     <key>StartInterval</key>
     <integer>3600</integer>
 
