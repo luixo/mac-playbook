@@ -31,7 +31,7 @@
 
 - name: Add helper files to .zshrc
   ansible.builtin.blockinfile:
-    path: "~/.zshrc"
+    path: "~/.zshenv"
     marker: "# {mark} dotfiles"
     prepend_newline: true
     append_newline: true

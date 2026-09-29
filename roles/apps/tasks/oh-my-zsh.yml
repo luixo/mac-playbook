@@ -59,3 +59,18 @@
           export NVM_AUTO_USE=true
           # Run Oh-My-Zsh
           source $ZSH/oh-my-zsh.sh
+
+    - name: Add minimal oh-my-zsh to .zshenv
+      ansible.builtin.blockinfile:
+        path: "~/.zshenv"
+        marker: "# {mark} Oh-my-zsh"
+        prepend_newline: true
+        append_newline: true
+        block: |
+          # This is a minimal oh-my-zsh installation for cron
+          if [[ ! -o login ]]; then
+            # Path to your oh-my-zsh installation.
+            export ZSH="{{ ohmyzsh.location }}"
+            # Run Oh-My-Zsh
+            source $ZSH/oh-my-zsh.sh
+          fi
