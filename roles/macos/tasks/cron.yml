@@ -1,20 +1,19 @@
-- name: Ensure a job to update brew exists
+- name: Set EDITOR in crontab
   ansible.builtin.cron:
-    name: "update brew"
-    minute: "0"
-    hour: "12"
-    job: "yes | brew upgrade"
+    name: EDITOR
+    env: true
+    job: /bin/zsh
 
-- name: Ensure a job to update brew exists
+- name: Ensure a job to update oh-my-zsh exists
   ansible.builtin.cron:
     name: "update oh-my-zsh"
     minute: "0"
-    hour: "12"
+    hour: "*/2"
     job: "yes | omz update"
 
 - name: Ensure a job to cleanup DS files
   ansible.builtin.cron:
     name: "cleanup DS files"
     minute: "0"
-    hour: "12"
+    hour: "*/2"
     job: "cleanup"

@@ -2,9 +2,11 @@
 - name: Tap Homebrew repos
   community.general.homebrew_tap:
     name: "{{ item }}"
+    trust: true
   loop:
     - localsend/localsend
     - garethgeorge/homebrew-backrest-tap
+    - domt4/autoupdate
 
 - name: Install Homebrew apps
   community.general.homebrew:

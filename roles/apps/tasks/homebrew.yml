@@ -21,3 +21,11 @@
       export HOMEBREW_CASK_OPTS='--no-quarantine'
       # https://github.com/Homebrew/brew/blob/master/Library/Homebrew/cmd/shellenv.sh
       eval "$(brew shellenv)"
+
+- name: Remove brew autoupdate
+  ansible.builtin.command: >
+    brew autoupdate delete
+
+- name: Start brew autoupdate
+  ansible.builtin.command: >
+    brew autoupdate start 12h --upgrade --cleanup --sudo --ac-only
