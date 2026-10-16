@@ -1,27 +1,16 @@
 ---
-- name: Add nvm to .zprofile
-  ansible.builtin.blockinfile:
-    path: "~/.zprofile"
-    marker: "# {mark} NVM"
-    append_newline: true
-    prepend_newline: true
-    block: |
-      # https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script
-      export NVM_DIR="$HOME/.nvm"
-
-- name: Add nvm exec to .zshrc
+- name: Add fnm exec to .zshrc
   ansible.builtin.blockinfile:
     path: "~/.zshrc"
-    marker: "# {mark} NVM"
+    marker: "# {mark} FNM"
     append_newline: true
     prepend_newline: true
     block: |
-      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      eval "$(fnm env --use-on-cd --shell zsh)"
 
-# TODO: Figure out how to load NVM on this step
+# TODO: Figure out how to load FNM on this step
 # - name: Install latest node versions
-#   shell: "nvm install {{ item }}"
+#   shell: "fnm install {{ item }}"
 #   loop:
-#     - 16
-#     - 18
-#     - 20
+#     - 24
+#     - 26
