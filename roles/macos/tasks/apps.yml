@@ -22,7 +22,7 @@
     - pam-reattach
     - imagemagick
     - exiftool
-    - nvm
+    - fnm
     - mas
     - backrest
 

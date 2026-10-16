@@ -28,8 +28,8 @@
 - name: Setup powerlevel10k
   import_tasks: p10k.yml
 
-- name: Setup NVM
-  import_tasks: nvm.yml
+- name: Setup FNM
+  import_tasks: fnm.yml
 
 - name: Setup VSCode
   import_tasks: vscode.yml

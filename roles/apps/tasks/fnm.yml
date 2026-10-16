@@ -1,0 +1,16 @@
+---
+- name: Add fnm exec to .zshrc
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} FNM"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      eval "$(fnm env --use-on-cd --shell zsh)"
+
+# TODO: Figure out how to load FNM on this step
+# - name: Install latest node versions
+#   shell: "fnm install {{ item }}"
+#   loop:
+#     - 24
+#     - 26

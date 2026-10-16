@@ -25,13 +25,6 @@
 
 - name: oh-my-zsh extenstions
   block:
-    - name: Clone zsh-nvm to oh-my-zsh
-      ansible.builtin.git:
-        repo: https://github.com/lukechilds/zsh-nvm
-        dest: "{{ ohmyzsh.location }}/custom/plugins/zsh-nvm"
-        single_branch: yes
-        version: master
-
     - name: Clone zsh-autosuggestions to oh-my-zsh
       ansible.builtin.git:
         repo: https://github.com/zsh-users/zsh-autosuggestions
@@ -53,10 +46,7 @@
           # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
           ZSH_THEME="powerlevel10k/powerlevel10k"
           # Which plugins would you like to load?
-          plugins=(git zsh-nvm zsh-autosuggestions)
-          # Auto run `nvm use` in dirs with `.nvmrc`
-          # https://github.com/lukechilds/zsh-nvm/tree/master?tab=readme-ov-file#auto-use
-          export NVM_AUTO_USE=true
+          plugins=(git zsh-autosuggestions fnm)
           # Run Oh-My-Zsh
           source $ZSH/oh-my-zsh.sh
 
