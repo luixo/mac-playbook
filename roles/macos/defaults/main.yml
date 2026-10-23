@@ -33,3 +33,9 @@ dockitems_persist:
   - name: Notes
     path: /System/Applications/Notes.app/
     pos: 910
+launchd_prefix: me.luixo
+launchd_jobs:
+  - label: omz-update
+    command: "ZSH=\"$HOME/.oh-my-zsh\" zsh -f \"$HOME/.oh-my-zsh/tools/upgrade.sh\""
+  - label: cleanup-ds
+    command: "cleanup"

@@ -1,0 +1,21 @@
+---
+- name: Ensure LaunchAgents dir exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/Library/LaunchAgents"
+    state: directory
+    mode: "0755"
+
+- name: Install launchd agents
+  ansible.builtin.template:
+    src: job.plist.j2
+    dest: "{{ ansible_env.HOME }}/Library/LaunchAgents/{{ launchd_prefix }}.{{ item.label }}.plist"
+    mode: "0644"
+  loop: "{{ launchd_jobs }}"
+  register: plists
+
+- name: Reload agents whose plist changed
+  community.general.launchd:
+    name: "{{ launchd_prefix }}.{{ item.item.label }}"
+    state: reloaded
+  loop: "{{ plists.results }}"
+  when: item.changed

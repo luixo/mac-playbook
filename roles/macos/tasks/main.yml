@@ -10,8 +10,8 @@
 - name: Setup Playbook itself
   import_tasks: playbook.yml
 
-- name: Add cron jobs
-  import_tasks: cron.yml
+- name: Add launchd jobs
+  import_tasks: launchd.yml
 
 - name: Include homebrew role
   include_role:
