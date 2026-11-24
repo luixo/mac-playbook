@@ -43,5 +43,8 @@
 - name: Setup Tailscale
   import_tasks: tailscale.yml
 
+- name: Setup Happ
+  import_tasks: happ.yml
+
 - name: Setup Backup environment
   import_tasks: backup.yml

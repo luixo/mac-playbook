@@ -58,7 +58,6 @@ Authorize in:
 Misc:
 
 - Touch ID: add more fingerprints (left & right index & right thumb)
-- Wireguard: install from MAS & add tunnel from Bitwarden (VPN ru)
 - Dia
   - set as default browser
   - add extensions: Adguard

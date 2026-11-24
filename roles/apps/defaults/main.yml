@@ -35,6 +35,8 @@ laptop:
   bw_key: "Laptop (MacOS)"
 screenshots:
   dir: "~/Desktop/screenshots"
+happ:
+  bw_key: "Happ"
 restic:
   job_name: "me.luixo.backup_notify"
   password:
