@@ -35,7 +35,7 @@
     - visual-studio-code
     - docker
     - google-chrome
-    - arc
+    - thebrowsercompany-dia
     - datagrip
     - mounty
     - whisky
@@ -47,6 +47,6 @@
     - elmedia-player
     - git-credential-manager
     - slack
-    - amneziavpn
     - tailscale-app
     - daisydisk
+    - openchamber

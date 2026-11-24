@@ -3,14 +3,14 @@ playbook:
   repo: "mac-playbook"
 dockutil_install: true
 dockitems_persist:
-  - name: Arc
-    path: /Applications/Arc.app/
+  - name: Dia
+    path: /Applications/Dia.app/
     pos: 1
-  - name: iTerm
-    path: /Applications/iTerm.app/
-    pos: 2
   - name: Telegram
     path: /Applications/Telegram.app/
+    pos: 2
+  - name: iTerm
+    path: /Applications/iTerm.app/
     pos: 3
   - name: Visual Studio Code
     path: /Applications/Visual Studio Code.app/
@@ -21,18 +21,18 @@ dockitems_persist:
   - name: System Settings
     path: /System/Applications/System Settings.app/
     pos: 6
+  - name: Slack
+    path: /System/Applications/Slack.app/
+    pos: 7
   - name: Calendar
     path: /System/Applications/Calendar.app/
-    pos: 7
-  - name: Todoist
-    path: /Applications/Todoist.app/
     pos: 8
-  - name: Slack
-    path: /Applications/Slack.app/
+  - name: OpenChamber
+    path: /Applications/OpenChamber.app/
     pos: 9
   - name: Notes
     path: /System/Applications/Notes.app/
-    pos: 910
+    pos: 10
 launchd_prefix: me.luixo
 launchd_jobs:
   - label: omz-update

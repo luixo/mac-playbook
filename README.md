@@ -38,18 +38,17 @@ source venv/bin/activate
 
 ### Password manager
 
-1. Copy over `~/Library/Application Support/Arc/User Data` to original folder
-1. Open Arc, authorize, enable sync (via Arc sync) & add Bitwarden extension
+1. Copy over `~/Library/Application Support/Dia/User Data` to original folder
+1. Open Dia, authorize, enable sync & add Bitwarden extension
 1. Authorize in Bitwarden, proceed with auth from there
 
 ### Manual tasks
 
 Authorize in:
 
-- Arc
+- Dia
 - VSCode (through "enable settings sync")
 - DataGrip
-- Amnezia (from bitwarden)
 - Notion
 - Todoist
 - Telegram
@@ -60,11 +59,10 @@ Misc:
 
 - Touch ID: add more fingerprints (left & right index & right thumb)
 - Wireguard: install from MAS & add tunnel from Bitwarden (VPN ru)
-- Arc
+- Dia
   - set as default browser
   - add extensions: Adguard
-  - set auto-archive to 30 days
-  - go to `arc://settings/` and turn off password / address saving
+  - go to `dia://settings/` and turn off password / address saving
 - GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
 - Bitwarden settings:

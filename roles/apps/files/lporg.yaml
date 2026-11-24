@@ -74,7 +74,7 @@ widgets:
   pages: []
 dock_items:
   apps:
-    - /Applications/Arc.app
+    - /Applications/Dia.app
     - /System/Applications/Mail.app
     - /Applications/Telegram.app
     - /Applications/iTerm.app
