@@ -30,6 +30,18 @@ echo "Verifying playbook is downloaded..."
 if [[ ! -d $playbook_repo_dir ]]; then
   mkdir -p ~/git
   git clone https://github.com/luixo/mac-playbook.git $playbook_repo_dir
+else
+  echo "Updating the existing playbook checkout..."
+  if ! git -C "$playbook_repo_dir" fetch --prune
+  then
+    echo "Could not fetch $playbook_repo_dir — check network or credentials, then re-run." >&2
+    exit 1
+  fi
+  if ! git -C "$playbook_repo_dir" pull --ff-only
+  then
+    echo "Cannot fast-forward $playbook_repo_dir — there are local commits or changes to resolve first." >&2
+    exit 1
+  fi
 fi
 
 # Install Homebrew
