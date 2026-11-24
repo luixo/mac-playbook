@@ -1,0 +1,26 @@
+---
+- name: Turn off password and address saving in Dia
+  ansible.builtin.shell: |
+    set -eu
+    prefs="$HOME/Library/Application Support/Dia/User Data/Default/Preferences"
+    mkdir -p "$(dirname "$prefs")"
+    if [[ -f "$prefs" ]]; then
+      tmp="$(mktemp)"
+      jq '. + {credentials_enable_service: false}
+          | .profile = ((.profile // {}) + {password_manager_enabled: false})
+          | .autofill = ((.autofill // {}) + {profile_enabled: false, credit_card_enabled: false})' \
+        "$prefs" > "$tmp"
+      if cmp -s "$prefs" "$tmp"; then
+        rm -f "$tmp"
+      else
+        mv "$tmp" "$prefs"
+        echo changed
+      fi
+    else
+      printf '%s\n' '{"credentials_enable_service": false, "profile": {"password_manager_enabled": false}, "autofill": {"profile_enabled": false, "credit_card_enabled": false}}' > "$prefs"
+      echo changed
+    fi
+  args:
+    executable: /bin/zsh
+  register: dia_prefs
+  changed_when: "'changed' in dia_prefs.stdout"

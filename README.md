@@ -62,7 +62,6 @@ Misc:
 - Dia
   - set as default browser
   - add extensions: Adguard
-  - go to `dia://settings/` and turn off password / address saving
 - GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
 - Bitwarden settings:
