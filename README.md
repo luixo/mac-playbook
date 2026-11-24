@@ -65,10 +65,6 @@ Misc:
   - appearance -> text size: 3rd marker (13 pt on the 11–18 pt scale)
 - Notion options
   - Preferences -> Use Command Search -> off
-- DataGrip
-  - import projects from `~/DataGripProjects`
-  - download required drivers
-  - re-enter all the passwords
 
 ### Follow-up for next restorations
 
