@@ -19,33 +19,31 @@
     type: bool
     value: false
 
-- name: "Keyboard: add 'next input source' hotkey"
-  shell: >-
-    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
-  loop:
-    - "Set :AppleSymbolicHotKeys:60:value:parameters:2 1048576"
+- name: "Keyboard: read symbolic hotkeys"
+  ansible.builtin.command:
+    argv:
+      - /usr/libexec/PlistBuddy
+      - -c
+      - "Print :AppleSymbolicHotKeys:{{ item.id }}:{{ item.path }}"
+      - "{{ ansible_env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
+  loop: "{{ keyboard.symbolic_hotkeys }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: keyboard_hotkeys_current
   changed_when: false
+  failed_when: false
 
-- name: "Keyboard: add 'previous input source' hotkey"
-  shell: >-
-    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
-  loop:
-    - "Set :AppleSymbolicHotKeys:61:value:parameters:2 1572864"
-  changed_when: false
-
-- name: "Keyboard: disable 'open spotlight' hotkey"
-  shell: >-
-    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
-  loop:
-    - "Set :AppleSymbolicHotKeys:64:enabled 0"
-  changed_when: false
-
-- name: "Keyboard: disable 'open finder' hotkey"
-  shell: >-
-    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.symbolichotkeys.plist
-  loop:
-    - "Set :AppleSymbolicHotKeys:65:enabled 0"
-  changed_when: false
+- name: "Keyboard: apply symbolic hotkeys"
+  ansible.builtin.command:
+    argv:
+      - /usr/libexec/PlistBuddy
+      - -c
+      - "Set :AppleSymbolicHotKeys:{{ item.item.id }}:{{ item.item.path }} {{ item.item.value }}"
+      - "{{ ansible_env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
+  loop: "{{ keyboard_hotkeys_current.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when: (item.stdout | trim) not in item.item.accepted
 
 # TODO: Uncomment this and remove a few previous tasks when we can put proper values in dicts
 # https://github.com/ansible-collections/community.general/issues/238#issuecomment-4126880219
@@ -73,21 +71,36 @@
 #         value:
 #           enabled: false
 
-- name: "Keyboard: remove all keyboards"
-  shell: >-
-    /usr/libexec/PlistBuddy -c "{{ item }}" ~/Library/Preferences/com.apple.HIToolbox.plist
-  loop:
-    - "Delete :AppleEnabledInputSources"
-    - "Add :AppleEnabledInputSources array"
-    - "Add :AppleEnabledInputSources: dict"
-    - "Add :AppleEnabledInputSources:0:InputSourceKind string 'Keyboard Layout'"
-    - "Add :AppleEnabledInputSources:0:'KeyboardLayout ID' integer 252"
-    - "Add :AppleEnabledInputSources:0:'KeyboardLayout Name' string ABC"
-    - "Add :AppleEnabledInputSources: dict"
-    - "Add :AppleEnabledInputSources:1:InputSourceKind string 'Keyboard Layout'"
-    - "Add :AppleEnabledInputSources:1:'KeyboardLayout ID' integer 19458"
-    - "Add :AppleEnabledInputSources:1:'KeyboardLayout Name' string RussianWin"
+- name: "Keyboard: check the input source list"
+  ansible.builtin.shell: |
+    /usr/bin/python3 - "$HOME/Library/Preferences/com.apple.HIToolbox.plist" '{{ keyboard.input_sources | to_json }}' <<'PY'
+    import json, plistlib, sys
+
+    with open(sys.argv[1], "rb") as plist:
+        current = plistlib.load(plist).get("AppleEnabledInputSources")
+    sys.exit(0 if current == json.loads(sys.argv[2]) else 1)
+    PY
+  register: keyboard_input_sources
   changed_when: false
+  failed_when: false
+
+- name: "Keyboard: remove all keyboards"
+  ansible.builtin.shell: |
+    set -e
+    plist="$HOME/Library/Preferences/com.apple.HIToolbox.plist"
+    /usr/libexec/PlistBuddy -c "Delete :AppleEnabledInputSources" "$plist" 2>/dev/null || true
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources array" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources: dict" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:0:InputSourceKind string 'Keyboard Layout'" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:0:'KeyboardLayout ID' integer 252" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:0:'KeyboardLayout Name' string ABC" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources: dict" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:1:InputSourceKind string 'Keyboard Layout'" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:1:'KeyboardLayout ID' integer 19458" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :AppleEnabledInputSources:1:'KeyboardLayout Name' string RussianWin" "$plist"
+  args:
+    executable: /bin/zsh
+  when: keyboard_input_sources.rc != 0
 
 # TODO: Uncomment this and remove a few previous tasks when we can put proper values in dicts
 # https://github.com/ansible-collections/community.general/issues/238#issuecomment-4126880219

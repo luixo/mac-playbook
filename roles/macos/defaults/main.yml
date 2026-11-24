@@ -39,3 +39,32 @@ launchd_jobs:
     command: "ZSH=\"$HOME/.oh-my-zsh\" zsh -f \"$HOME/.oh-my-zsh/tools/upgrade.sh\""
   - label: cleanup-ds
     command: "cleanup"
+keyboard:
+  symbolic_hotkeys:
+    - name: "next input source"
+      id: 60
+      path: "value:parameters:2"
+      value: "1048576"
+      accepted: ["1048576"]
+    - name: "previous input source"
+      id: 61
+      path: "value:parameters:2"
+      value: "1572864"
+      accepted: ["1572864"]
+    - name: "open spotlight"
+      id: 64
+      path: "enabled"
+      value: "0"
+      accepted: ["false", "0"]
+    - name: "open finder"
+      id: 65
+      path: "enabled"
+      value: "0"
+      accepted: ["false", "0"]
+  input_sources:
+    - "InputSourceKind": "Keyboard Layout"
+      "KeyboardLayout ID": 252
+      "KeyboardLayout Name": "ABC"
+    - "InputSourceKind": "Keyboard Layout"
+      "KeyboardLayout ID": 19458
+      "KeyboardLayout Name": "RussianWin"
