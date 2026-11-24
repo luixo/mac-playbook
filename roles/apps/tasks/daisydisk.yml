@@ -1,0 +1,28 @@
+---
+# DaisyDisk keeps its license in a small plist. The Bitwarden item holds the
+# registration key as its password and the customer name in a custom field.
+- name: Ensure DaisyDisk support directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/Library/Application Support/DaisyDisk"
+    state: directory
+    mode: "0755"
+
+- name: Install the DaisyDisk license
+  vars:
+    license_name: "{{ lookup('community.general.bitwarden', daisydisk.bw_key, field='Name', bw_session=bw_session)[0] }}"
+    license_key: "{{ lookup('community.general.bitwarden', daisydisk.bw_key, field='password', bw_session=bw_session)[0] }}"
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/DaisyDisk/License.DaisyDisk"
+    mode: "0644"
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>License_CustomerName</key>
+        <string>{{ license_name }}</string>
+        <key>License_RegistrationKey</key>
+        <string>{{ license_key }}</string>
+      </dict>
+      </plist>
+  no_log: true

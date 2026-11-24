@@ -51,3 +51,6 @@
 
 - name: Setup Telegram
   import_tasks: telegram.yml
+
+- name: Setup DaisyDisk
+  import_tasks: daisydisk.yml

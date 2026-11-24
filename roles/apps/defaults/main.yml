@@ -31,6 +31,8 @@ tailnet:
 gpg:
   owner_email: lexx92@mail.ru
   bw_key: "GPG ECDSA key MacOS"
+daisydisk:
+  bw_key: "DaisyDisk"
 laptop:
   bw_key: "Laptop (MacOS)"
 screenshots:
