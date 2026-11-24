@@ -28,6 +28,12 @@
 - name: Configure Finder settings
   import_tasks: settings/finder.yml
 
+- name: Configure Safari settings
+  import_tasks: settings/safari.yml
+
+- name: Configure Passwords settings
+  import_tasks: settings/passwords.yml
+
 - name: Configure Control Center settings
   import_tasks: settings/control_center.yml
 
