@@ -7,6 +7,7 @@
     - localsend/localsend
     - garethgeorge/homebrew-backrest-tap
     - domt4/autoupdate
+    - anomalyco/tap
 
 - name: Install Homebrew apps
   community.general.homebrew:
@@ -25,6 +26,15 @@
     - fnm
     - mas
     - backrest
+    - bun
+    - ffmpeg
+    - openjdk
+    - openjdk@21
+    - postgresql@18
+    - pyenv
+    - python@3.12
+    - opencode
+    - restic
 
 - name: Install Homebrew casks
   community.general.homebrew_cask:
@@ -50,3 +60,8 @@
     - tailscale-app
     - daisydisk
     - openchamber
+    - android-studio
+    - firefox
+    - hoppscotch
+    - android-platform-tools
+    - zulu@17
