@@ -20,6 +20,12 @@
     - .aliases
     - .functions
 
+- name: Ensure the scripts dir exists
+  ansible.builtin.file:
+    path: "~/.scripts"
+    state: directory
+    mode: 0755
+
 - name: Copy executable scripts to home dir
   ansible.builtin.copy:
     src: "{{ role_path }}/files/{{ item }}"
