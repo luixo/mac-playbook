@@ -1,6 +1,6 @@
 - name: "Spotlight: don't show on control center"
   osx_defaults:
-    domain: "com.apple.Spotlight"
+    domain: "com.apple.controlcenter"
     key: "NSStatusItem Visible Item-0"
     state: false
 
