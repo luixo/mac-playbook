@@ -41,7 +41,7 @@
 
 - name: Fetch the Russian trusted certificates
   vars:
-    cert_dir: "{{ ansible_env.HOME }}/.cache/ca-ru"
+    cert_dir: "{{ ansible_facts.env.HOME }}/.cache/ca-ru"
   block:
     - name: Create the certificate cache directory
       ansible.builtin.file:

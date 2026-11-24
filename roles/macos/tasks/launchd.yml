@@ -1,14 +1,14 @@
 ---
 - name: Ensure LaunchAgents dir exists
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Library/LaunchAgents"
+    path: "{{ ansible_facts.env.HOME }}/Library/LaunchAgents"
     state: directory
     mode: "0755"
 
 - name: Install launchd agents
   ansible.builtin.template:
     src: job.plist.j2
-    dest: "{{ ansible_env.HOME }}/Library/LaunchAgents/{{ launchd_prefix }}.{{ item.label }}.plist"
+    dest: "{{ ansible_facts.env.HOME }}/Library/LaunchAgents/{{ launchd_prefix }}.{{ item.label }}.plist"
     mode: "0644"
   loop: "{{ launchd_jobs }}"
   register: plists

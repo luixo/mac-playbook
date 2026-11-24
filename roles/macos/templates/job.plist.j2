@@ -17,8 +17,8 @@
 {% endfor %}
   </array>
   <key>StandardOutPath</key>
-  <string>{{ ansible_env.HOME }}/Library/Logs/{{ launchd_prefix }}.{{ item.label }}.log</string>
+  <string>{{ ansible_facts.env.HOME }}/Library/Logs/{{ launchd_prefix }}.{{ item.label }}.log</string>
   <key>StandardErrorPath</key>
-  <string>{{ ansible_env.HOME }}/Library/Logs/{{ launchd_prefix }}.{{ item.label }}.log</string>
+  <string>{{ ansible_facts.env.HOME }}/Library/Logs/{{ launchd_prefix }}.{{ item.label }}.log</string>
 </dict>
 </plist>

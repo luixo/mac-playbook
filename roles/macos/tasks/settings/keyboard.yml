@@ -25,7 +25,7 @@
       - /usr/libexec/PlistBuddy
       - -c
       - "Print :AppleSymbolicHotKeys:{{ item.id }}:{{ item.path }}"
-      - "{{ ansible_env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
+      - "{{ ansible_facts.env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
   loop: "{{ keyboard.symbolic_hotkeys }}"
   loop_control:
     label: "{{ item.name }}"
@@ -39,7 +39,7 @@
       - /usr/libexec/PlistBuddy
       - -c
       - "Set :AppleSymbolicHotKeys:{{ item.item.id }}:{{ item.item.path }} {{ item.item.value }}"
-      - "{{ ansible_env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
+      - "{{ ansible_facts.env.HOME }}/Library/Preferences/com.apple.symbolichotkeys.plist"
   loop: "{{ keyboard_hotkeys_current.results }}"
   loop_control:
     label: "{{ item.item.name }}"

@@ -7,12 +7,12 @@
       - open
       - "happ://add/{{ subscription_url | urlencode | replace('/', '%2F') }}"
   args:
-    creates: "{{ ansible_env.HOME }}/.config/happ/subscription-added"
+    creates: "{{ ansible_facts.env.HOME }}/.config/happ/subscription-added"
   no_log: true
 
 - name: Remember the subscription was added
   ansible.builtin.copy:
     content: "{{ subscription_url | hash('sha256') }}\n"
-    dest: "{{ ansible_env.HOME }}/.config/happ/subscription-added"
+    dest: "{{ ansible_facts.env.HOME }}/.config/happ/subscription-added"
     mode: 0600
   no_log: true
