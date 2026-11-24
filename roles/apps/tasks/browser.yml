@@ -38,3 +38,57 @@
     executable: /bin/zsh
   register: dia_prefs
   changed_when: "'changed' in dia_prefs.stdout"
+
+- name: Fetch the Russian trusted certificates
+  vars:
+    cert_dir: "{{ ansible_env.HOME }}/.cache/ca-ru"
+  block:
+    - name: Create the certificate cache directory
+      ansible.builtin.file:
+        path: "{{ cert_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download the Russian trusted certificates
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ cert_dir }}/{{ item.name }}"
+        checksum: "sha256:{{ item.sha256 }}"
+        mode: "0644"
+        # The CA is not trusted yet, so the checksum pin above is what actually protects the download.
+        validate_certs: false
+      loop: "{{ dia.trusted_ca.certificates }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Convert the certificates to the base64 DER the policy expects
+      ansible.builtin.shell: |
+        set -o pipefail
+        cert="{{ cert_dir }}/{{ item.name }}"
+        if grep -q -- '-----BEGIN CERTIFICATE-----' "$cert"; then
+          openssl x509 -in "$cert" -outform DER
+        else
+          cat "$cert"
+        fi | base64 | tr -d '\n'
+      args:
+        executable: /bin/zsh
+      loop: "{{ dia.trusted_ca.certificates }}"
+      loop_control:
+        label: "{{ item.name }}"
+      register: dia_cert_der
+      changed_when: false
+
+    - name: Write the Dia CA trust policy
+      become: true
+      ansible.builtin.template:
+        src: dia-trust-policy.plist.j2
+        dest: /Library/Managed Preferences/company.thebrowser.dia.plist
+        owner: root
+        group: wheel
+        mode: "0644"
+
+    - name: Validate the Dia CA trust policy
+      become: true
+      ansible.builtin.command: plutil -lint "/Library/Managed Preferences/company.thebrowser.dia.plist"
+      changed_when: false
+

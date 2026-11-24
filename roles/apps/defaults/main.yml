@@ -37,6 +37,20 @@ laptop:
   bw_key: "Laptop (MacOS)"
 screenshots:
   dir: "~/Desktop/screenshots"
+dia:
+  trusted_ca:
+    domains:
+      - tbank.ru
+    certificates:
+      - name: Russian_Trusted_Root_CA.cer
+        url: https://gu-st.ru/content/downloads/Russian_Trusted_Root_CA.cer
+        sha256: 936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504
+      - name: Russian_Trusted_Sub_CA.cer
+        url: https://gu-st.ru/content/downloads/Russian_Trusted_Sub_CA.cer
+        sha256: f0ae589f36774f29ef3648f7984b08d42fcce6f1ffeeb6236d773daeb2744ea6
+      - name: Russian_Trusted_Sub_CA_2024.cer
+        url: https://gu-st.ru/content/downloads/Russian_Trusted_Sub_CA_2024.cer
+        sha256: 6f9d829c8e6712444fce3624658d8788672849c5d5b7b53fd9cf7e83eac4193e
 docker:
   bw_key: "Docker"
   token_field: "PAT Token"

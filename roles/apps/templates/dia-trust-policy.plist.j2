@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CACertificatesWithConstraints</key>
+  <array>
+{% for cert in dia_cert_der.results %}
+    <dict>
+      <key>certificate</key>
+      <string>{{ cert.stdout }}</string>
+      <key>constraints</key>
+      <dict>
+        <key>permitted_dns_names</key>
+        <array>
+{% for domain in dia.trusted_ca.domains %}
+          <string>{{ domain }}</string>
+{% endfor %}
+        </array>
+      </dict>
+    </dict>
+{% endfor %}
+  </array>
+</dict>
+</plist>
