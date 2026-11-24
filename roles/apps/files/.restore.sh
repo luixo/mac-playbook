@@ -2,7 +2,6 @@
 
 brew services start backrest
 
-export RESTIC_PASSWORD=$(security find-generic-password -s restic_backup_password -w)
 # Check RESTIC_PASSWORD
 if [[ -z "$RESTIC_PASSWORD" ]]; then
   echo "Error: RESTIC_PASSWORD is not set, you need to restart the shell."
@@ -16,28 +15,19 @@ shift
 # Set environment variables based on repo choice
 case "$REPO_CHOICE" in
   nas)
-    export RESTIC_REPOSITORY="sftp:nas:/mnt/user/backups"
-    ;;
-  yandex)
-    export RESTIC_REPOSITORY="s3://storage.yandexcloud.net/luixo-backups"
-    export AWS_ACCESS_KEY_ID=$(security find-generic-password -s yandex_s3_key -g 2>&1 | grep '"acct"' | sed -E 's/.*<blob>="(.*)"/\1/')
-    export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s yandex_s3_key -w)
-    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
-        echo "Error: AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY is not set, you need to set them."
-        exit 1
-    fi
+    export RESTIC_REPOSITORY="sftp:nas:/mnt/user/restic"
     ;;
   scaleway)
-    export RESTIC_REPOSITORY="s3://s3.fr-par.scw.cloud/luixo-archive/restic"
-    export AWS_ACCESS_KEY_ID=$(security find-generic-password -s scaleway_s3_key -g 2>&1 | grep '"acct"' | sed -E 's/.*<blob>="(.*)"/\1/')
-    export AWS_SECRET_ACCESS_KEY=$(security find-generic-password -s scaleway_s3_key -w)
-    if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
-        echo "Error: AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY is not set, you need to set them."
+    export RESTIC_REPOSITORY="s3://s3.fr-par.scw.cloud/luixo-restic-mirror"
+    if [[ -z "$SCW_AWS_ACCESS_KEY_ID" || -z "$SCW_AWS_SECRET_ACCESS_KEY" ]]; then
+        echo "Error: SCW_AWS_ACCESS_KEY_ID or SCW_AWS_SECRET_ACCESS_KEY is not set, you need to set them."
         exit 1
     fi
+    export AWS_ACCESS_KEY_ID=${SCW_AWS_ACCESS_KEY_ID}
+    export AWS_SECRET_ACCESS_KEY=${SCW_AWS_SECRET_ACCESS_KEY}
     ;;
   *)
-    echo "Invalid repository choice: $REPO_CHOICE. Must be one of: nas, yandex, scaleway"
+    echo "Invalid repository choice: $REPO_CHOICE. Must be one of: nas, scaleway"
     exit 1
     ;;
 esac
@@ -80,23 +70,26 @@ elif [[ -n "$EXCLUDE" ]]; then
   plans=($(printf "%s\n" "${plans[@]}" | grep -v -E "$(printf "%s|" "${exclude_arr[@]}" | sed 's/|$//')"))
 fi
 
+echo "Plans to restore: $plans"
+
 if [[ ${#plans[@]} -eq 0 ]]; then
   echo "No plans to restore after filtering."
   exit 1
 fi
 
-echo "Plans to restore: $plans"
 # Create target directory
 mkdir -p ~/Downloads/restored
 
 # Restore in parallel
+echo "Starting restore for plans: ${plans[*]}"
 for plan in "${plans[@]}"; do
   target_dir=~/Downloads/restored/$plan
   mkdir -p "$target_dir"
-
-  echo "Restoring plan: $plan -> $target_dir"
-
-  ~/.local/share/backrest/restic restore latest --tag "plan:$plan" --target "$target_dir"
+  (
+    echo "Restoring plan: $plan -> $target_dir"
+    ~/.local/share/backrest/restic restore latest --tag "plan:$plan" --target "$target_dir"
+  ) &
 done
 
+wait
 echo "All restores finished."
