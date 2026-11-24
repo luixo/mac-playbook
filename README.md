@@ -50,7 +50,6 @@ Authorize in:
 - VSCode (through "enable settings sync")
 - DataGrip
 - Notion
-- Todoist
 - Telegram
 
 Misc:
