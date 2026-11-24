@@ -3,6 +3,7 @@
   ansible.builtin.command: duti -x https
   register: default_browser
   changed_when: false
+  failed_when: false
 
 # macOS shows a one-time "change your default browser?" confirmation for a
 # programmatic change, so this is the last manual click of the step.
