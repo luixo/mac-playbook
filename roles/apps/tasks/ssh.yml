@@ -69,36 +69,16 @@
       shell: >-
         ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}
 
-- name: "Prepopulate files"
+- name: Prepopulate hosts
+  community.general.ssh_config:
+    host: "{{ item.key }}"
+    hostname: "{{ item.key }}.{{ tailnet.domain }}"
+    remote_user: "{{ item.value.remote_user }}"
+    port: "{{ item.value.port | default(omit) }}"
+  loop: "{{ ssh.hosts | dict2items }}"
+
+- name: Prepopulate SSH config
   block:
-    - name: Add Dokploy host in the configuration
-      community.general.ssh_config:
-        user: "{{ owner }}"
-        group: staff
-        host: "dokploy"
-        hostname: "luixo.ru"
-    - name: Add NAS (local) host in the configuration
-      community.general.ssh_config:
-        user: "{{ owner }}"
-        group: staff
-        remote_user: root
-        host: "nas"
-        hostname: "192.168.100.101"
-    - name: Add NAS (VPN) host in the configuration
-      community.general.ssh_config:
-        user: "{{ owner }}"
-        group: staff
-        remote_user: root
-        host: "nas-vpn"
-        hostname: "100.111.100.100"
-    - name: Add NAS (internet) host in the configuration
-      community.general.ssh_config:
-        user: "{{ owner }}"
-        group: staff
-        remote_user: root
-        host: "nas-remote"
-        hostname: "sad.luixo.me"
-        port: 2229
     - name: Add Github server to known_hosts
       ansible.builtin.known_hosts:
         name: github.com

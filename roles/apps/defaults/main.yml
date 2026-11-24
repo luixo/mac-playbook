@@ -13,6 +13,14 @@ ssh:
   identity: "id_ed25519"
   bw_key: "ED25519 SSH key macbook"
   bw_field: "Private key"
+  hosts:
+    tower:
+      remote_user: root
+      port: 27191
+    hetzner:
+      remote_user: root
+tailnet:
+  domain: tail5aed95.ts.net
 gpg:
   owner_email: lexx92@mail.ru
   bw_key: "GPG ECDSA key MacOS"

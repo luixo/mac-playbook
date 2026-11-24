@@ -34,5 +34,8 @@
 - name: Setup VSCode
   import_tasks: vscode.yml
 
+- name: Setup Tailscale
+  import_tasks: tailscale.yml
+
 - name: Setup Backup environment
   import_tasks: backup.yml
