@@ -1,0 +1,49 @@
+---
+- name: Install Xcode from the App Store
+  ansible.builtin.command: mas install 497799835
+  register: xcode_install
+  changed_when: "'already installed' not in xcode_install.stdout"
+  failed_when: false
+
+- name: Report Xcode install failure
+  ansible.builtin.debug:
+    msg: >-
+      Xcode was not installed ({{ xcode_install.stderr | default('no output') | trim }}).
+      Sign in to the App Store first, then re-run this task.
+  when: xcode_install.rc != 0
+
+- name: Check Xcode is installed
+  ansible.builtin.stat:
+    path: /Applications/Xcode.app
+  register: xcode_app
+
+- name: Point the command line tools at Xcode
+  ansible.builtin.command: xcode-select -s /Applications/Xcode.app
+  become: true
+  changed_when: false
+  when: xcode_app.stat.exists
+
+- name: Accept the Xcode license
+  ansible.builtin.command: xcodebuild -license accept
+  become: true
+  changed_when: false
+  when: xcode_app.stat.exists
+
+- name: Install the first-launch Xcode components
+  ansible.builtin.command: xcodebuild -runFirstLaunch
+  become: true
+  changed_when: false
+  when: xcode_app.stat.exists
+
+- name: List installed simulator runtimes
+  ansible.builtin.command: xcrun simctl list runtimes
+  register: simulator_runtimes
+  changed_when: false
+  when: xcode_app.stat.exists
+
+- name: Download the iOS simulator runtime
+  ansible.builtin.command: xcodebuild -downloadPlatform iOS
+  become: true
+  when:
+    - xcode_app.stat.exists
+    - "'iOS' not in simulator_runtimes.stdout"

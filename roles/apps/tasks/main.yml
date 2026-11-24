@@ -13,6 +13,9 @@
 - name: Setup Homebrew
   import_tasks: homebrew.yml
 
+- name: Setup Xcode
+  import_tasks: xcode.yml
+
 - name: Setup zsh
   import_tasks: zsh.yml
 
