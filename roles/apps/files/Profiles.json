@@ -87,6 +87,14 @@
         "Green Component": 0.53725490196078429
       },
       "Keyboard Map": {
+        "0xf700-0x280000": {
+          "Action": 11,
+          "Text": "0x1b 0x1b 0x5b 0x41"
+        },
+        "0xf701-0x280000": {
+          "Action": 11,
+          "Text": "0x1b 0x1b 0x5b 0x42"
+        },
         "0xf728-0x0": {
           "Action": 11,
           "Text": "0x4"
@@ -117,7 +125,7 @@
         },
         "0x7f-0x80000": {
           "Action": 11,
-          "Text": "\"0x1b 0x7f\""
+          "Text": "0x1b 0x7f"
         }
       },
       "Visual Bell": true,
@@ -170,7 +178,7 @@
       "Silence Bell": false,
       "Rows": 25,
       "Draw Powerline Glyphs": false,
-      "Guid": "LUIXOPRO-1234-5678-BEEF-CABCDEFGH12",
+      "Guid": "local",
       "Ansi 14 Color (Dark)": {
         "Red Component": 0.57647058823529407,
         "Color Space": "sRGB",

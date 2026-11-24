@@ -58,7 +58,6 @@ Authorize in:
 
 Misc:
 
-- Set default profile in iTerm2
 - Touch ID: add more fingerprints (left & right index & right thumb)
 - Wireguard: install from MAS & add tunnel from Bitwarden (VPN ru)
 - Arc

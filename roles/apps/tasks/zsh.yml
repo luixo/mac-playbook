@@ -10,3 +10,23 @@
       # https://superuser.com/a/1248123
       unsetopt inc_append_history
       unsetopt share_history
+
+- name: Add arrow key bindings for multi-line history
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} arrow keys"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      # oh-my-zsh binds Up/Down to up-line-or-beginning-search / down-line-or-beginning-search, which only search history by prefix once you reach the top line of a multi-line command.
+      # If the previous command doesn't start with the same prefix, they get stuck.
+      # Use plain history movement instead: walk the lines, then go to the previous entry.
+      # Option+Up/Down jump straight to the previous/next history entry, without walking the lines of a multi-line command.
+      bindkey '^[[A' up-line-or-history
+      bindkey '^[OA' up-line-or-history
+      bindkey '^[[B' down-line-or-history
+      bindkey '^[OB' down-line-or-history
+      bindkey '^[^[OA' up-history
+      bindkey '^[^[[A' up-history
+      bindkey '^[^[OB' down-line-or-history
+      bindkey '^[^[[B' down-line-or-history

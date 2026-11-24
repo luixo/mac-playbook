@@ -50,3 +50,10 @@
         mode: 0644
       loop:
         - Profiles.json
+
+- name: "Defaults: set the dynamic profile as default"
+  community.general.osx_defaults:
+    domain: "com.googlecode.iterm2"
+    key: "Default Bookmark Guid"
+    type: string
+    value: local
