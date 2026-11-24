@@ -52,7 +52,6 @@ Authorize in:
 - Notion
 - Todoist
 - Telegram
-- Docker
 
 Misc:
 

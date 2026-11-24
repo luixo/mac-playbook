@@ -37,6 +37,9 @@ laptop:
   bw_key: "Laptop (MacOS)"
 screenshots:
   dir: "~/Desktop/screenshots"
+docker:
+  bw_key: "Docker"
+  token_field: "PAT Token"
 happ:
   bw_key: "Happ"
 restic:

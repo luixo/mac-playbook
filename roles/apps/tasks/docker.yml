@@ -9,3 +9,34 @@
       # Setting default platform for Docker to use appropriate images
       # https://docs.docker.com/engine/reference/commandline/cli/#environment-variables
       export DOCKER_DEFAULT_PLATFORM=linux/aarch64
+
+- name: Log in to Docker Hub with a personal access token
+  block:
+    - name: Create a temporary file for the Docker token
+      ansible.builtin.tempfile:
+        state: file
+        suffix: docker-pat
+      register: docker_token_file
+
+    - name: Write the Docker personal access token
+      vars:
+        docker_token: "{{ lookup('community.general.bitwarden', docker.bw_key, field=docker.token_field, bw_session=bw_session)[0] }}"
+      ansible.builtin.copy:
+        content: "{{ docker_token }}"
+        dest: "{{ docker_token_file.path }}"
+        mode: "0600"
+      no_log: true
+
+    - name: Log in to Docker Hub
+      vars:
+        docker_username: "{{ lookup('community.general.bitwarden', docker.bw_key, field='username', bw_session=bw_session)[0] }}"
+      ansible.builtin.shell: >-
+        docker login --username {{ docker_username | quote }} --password-stdin < {{ docker_token_file.path | quote }}
+      # Re-running only refreshes the stored credential, it changes no config.
+      changed_when: false
+  always:
+    - name: Remove the temporary Docker token file
+      ansible.builtin.file:
+        path: "{{ docker_token_file.path }}"
+        state: absent
+      when: docker_token_file is defined and docker_token_file.path is defined
