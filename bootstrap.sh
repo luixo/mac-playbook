@@ -5,24 +5,26 @@ playbook_repo_dir=~/git/mac-playbook
 # We want to throw in case something fails
 set -e
 
-# Install Xcode Command Line Developer Tools
-echo "Checking for Xcode Command Line Developer Tools..."
-xcode-select -p >& /dev/null || {
-  xcode-select --install
-  echo "Select \"Install\" when prompted for Command Line Developer Tools"
-  sleep 3
-  osascript -e 'tell application "Install Command Line Developer Tools" to activate'
-  echo "Waiting for Xcode Command Line Tools to finish installing..."
-  while ! pkgutil --pkg-info=com.apple.pkg.CLTools_Executables &>/dev/null; do
-      sleep 1
-  done
-  echo "Xcode Command Line Tools are installed."
-}
+echo "Checking sudo access (Homebrew needs it to install the Command Line Tools)..."
+if ! sudo -n true 2>/dev/null; then
+  sudo -v
+fi
 
-# Install Rosetta 2
-if ! /usr/bin/pgrep -q oahd; then
-  echo "Installing Rosetta dynamic translator..."
-  /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+# Install Homebrew
+echo "Checking for Homebrew..."
+if [[ ! -f /opt/homebrew/bin/brew ]]; then
+  echo "Installing Homebrew (and the Command Line Developer Tools it needs)..."
+  NONINTERACTIVE=1 CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
+fi
+
+# Activate Homebrew for the bootstrap script
+echo "Adding homebrew to PATH"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Verify CLT are installed
+if ! xcode-select -p >/dev/null 2>&1; then
+  echo "Xcode Command Line Tools are missing — run 'xcode-select --install' and re-run." >&2
+  exit 1
 fi
 
 # Clone playbook to a local machine
@@ -44,79 +46,37 @@ else
   fi
 fi
 
-# Install Homebrew
-echo "Checking for Homebrew..."
-if ! brew config >& /dev/null; then 
-  if [[ ! -f /opt/homebrew/bin/brew ]]; then
-    echo "Installing Homebrew..." 
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-fi
-export HOMEBREW_NO_ASK=1
-
-# Activate Homebrew for the bootstrap script
-echo "Adding homebrew to PATH"
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Install all apps that are immediately required for bootstrapping. 
-echo "Checking for immediately installed apps"
-export HOMEBREW_CASK_OPTS='--no-quarantine'
-# Install regular brew apps
-brew install --quiet jq ansible python pyenv python-setuptools virtualenv bitwarden-cli
+# Only what is needed to run the playbook
+echo "Installing Ansible and the Bitwarden CLI..."
+HOMEBREW_NO_ASK=1 brew install --quiet ansible bitwarden-cli
 
 # Login to Bitwarden CLI
 echo "Checking for Bitwarden CLI..."
-output=$(bw lock || true)
-unlock_count=0
-unlock_max_attempts=10
-while [[ ! "$output" == *"Your vault is locked"* ]] || [[ $unlock_count -eq $unlock_max_attempts ]]; do
+if ! bw login --check >/dev/null 2>&1; then
   echo "Signing in to Bitwarden"
-  echo "Please visit url https://vault.bitwarden.com/#/settings/security/security-keys to obtain a key"
-  vared -p "Enter your client id: " -c BW_CLIENTID
-  vared -p "Enter your client secret: " -c BW_CLIENTSECRET
-  export BW_CLIENTID
-  export BW_CLIENTSECRET
-  output=$(bw login --apikey || true)
-  if [[ ! "$output" == *"You are logged in"* ]]; then
-    echo "Wrong credentials, please try again"
-    (( unlock_count++ ))
-  else
-    break
+  echo "Create an API key at https://vault.bitwarden.com/#/settings/security/security-keys"
+  for attempt in {1..3}; do
+    vared -p "Enter your client id: " -c BW_CLIENTID
+    vared -p "Enter your client secret: " -c BW_CLIENTSECRET
+    export BW_CLIENTID BW_CLIENTSECRET
+    if bw login --apikey >/dev/null 2>&1; then
+      echo "Logged in to Bitwarden."
+      break
+    fi
+    echo "Wrong credentials (attempt $attempt/3), please try again."
+  done
+  if ! bw login --check >/dev/null 2>&1; then
+    echo "Could not log in to Bitwarden after 3 attempts." >&2
+    exit 1
   fi
-done
-
-# TODO: get back whenever vaultpass is needed
-# Add `vault_password_file=~/.ansible/vaultpass` to `ansible.cfg`
-#
-# Restore Ansible vaultpass via Bitwarden
-# echo "Checking for vault password file..."
-# if [[ ! -f ~/.ansible/vaultpass ]]; then
-#   echo "Retrieving vault password"
-#   mkdir -p -m 0755 ~/.ansible
-#   touch ~/.ansible/vaultpass
-#   read -ps "Enter your Bitwarden master password: " BW_PASSWORD
-#   export BW_PASSWORD
-#   echo "\nUnlocking the vault..."
-#   export BW_SESSION=$(bw unlock --passwordenv BW_PASSWORD --raw)
-#   bw get item "Ansible Vault - Playbook" | jq ".fields[0].value" > ~/.ansible/vaultpass
-# fi
+fi
 
 echo "Switching to the playbook dir..."
 cd $playbook_repo_dir
 
-# Install python environment to run ansible
-echo "Checking python environment..."
-if [[ ! -d venv ]]; then 
-  eval "$(pyenv init -)"
-  python3 -m venv venv
-  source venv/bin/activate
-  # We need this package to run Ansible
-  pip3 install packaging
-fi
-
 # Install ansible requirements
 echo "Installing Ansible requirements..."
-if [[ ! -d '.ansible/collections' ]]; then
+if [[ ! -d ansible_collections/community/general ]]; then
   # Remove -f when patch is not needed anymore
   ansible-galaxy collection install -r requirements.yml -f
   patch < patches/bitwarden.patch
@@ -124,6 +84,6 @@ fi
 
 echo ""
 echo "Finished bootstrapping!"
-echo "Run \`ansible-playbook main.yml --ask-vault-pass\` with vault password (Bitwarden master password) to engage Ansible playbook"
-echo "If session is lost - reenable prerequisites for the run: \`cd $playbook_repo_dir && eval \"\$(/opt/homebrew/bin/brew shellenv)\" && source venv/bin/activate\`"
+echo "Run \`ansible-playbook main.yml --ask-vault-pass -K\`: vault password is the Bitwarden master password, -K asks for your sudo password"
+echo "If the session is lost: \`cd $playbook_repo_dir && eval \"\$(/opt/homebrew/bin/brew shellenv)\"\`"
 echo ""

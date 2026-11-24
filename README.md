@@ -8,15 +8,14 @@ This playbook bootstraps a fresh Mac to be ready for my personal usage.
 1. Login to iCloud
 1. Login into [Bitwarden Vault](https://vault.bitwarden.com/#/settings/security/security-keys) to obtain an API key
 1. Add Terminal app to Settings -> Privacy and Security -> Full Disk Access
-1. Run `sudo echo 1` at least once to get access to sudo from your account
 
 ## Installation
 
 ```sh
-# Bootstrap (wait for sudo password prompt); if it fails on sudo error, run `sudo echo 1` and re-run script afterwards
+# Bootstrap (asks for your sudo password)
 source <(curl -s https://raw.githubusercontent.com/luixo/mac-playbook/main/bootstrap.sh)
-# Run playbook with vault password (Bitwarden master password)
-ansible-playbook main.yml --ask-vault-pass
+# Run playbook with vault password (Bitwarden master password) and sudo password
+ansible-playbook main.yml --ask-vault-pass -K
 ```
 
 In case you lost the session after bootstrap has finished:
@@ -26,8 +25,6 @@ In case you lost the session after bootstrap has finished:
 cd git/mac-playbook
 # Add homebrew to path
 eval "$(/opt/homebrew/bin/brew shellenv)"
-# Activate python virtual env
-source venv/bin/activate
 ```
 
 ## After installation
