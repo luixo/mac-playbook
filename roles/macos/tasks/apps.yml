@@ -36,6 +36,7 @@
     - opencode
     - restic
     - duti
+    - rust
 
 - name: Install Homebrew casks
   community.general.homebrew_cask:
