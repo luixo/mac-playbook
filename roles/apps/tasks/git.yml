@@ -118,6 +118,13 @@
     value: >-
       !f() { cd -- "${GIT_PREFIX:-.}"; GIT_DIFF_IMAGE_ENABLED=1 git diff "$@"; }; f
 
+- name: "Git: aliases"
+  git_config:
+    scope: global
+    name: "alias.{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ git.aliases | dict2items }}"
+
 - name: "Git: image diff command"
   git_config:
     scope: global

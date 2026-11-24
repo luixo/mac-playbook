@@ -5,6 +5,13 @@ git:
   ignore_file: ~/.gitignore_global
   attributes_file: ~/.gitattributes
   dir: ~/git/
+  aliases:
+    co: checkout
+    br: branch
+    ci: commit
+    st: status
+    squash-onto: >-
+      !f() { base=$(git merge-base HEAD "$1") && first=$(git rev-list --reverse $base..HEAD | head -n1) && git reset --soft $base && git commit --no-verify --reuse-message=$first; }; f
 iterm:
   tools_dir: ~/.iterm2
 ohmyzsh:
