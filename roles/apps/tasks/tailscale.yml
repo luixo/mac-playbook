@@ -2,4 +2,10 @@
 - name: Use tailnet DNS so MagicDNS names resolve
   ansible.builtin.command: tailscale set --accept-dns=true
   changed_when: false
-  
+
+- name: Launch Tailscale at login
+  community.general.osx_defaults:
+    domain: io.tailscale.ipn.macsys
+    key: TailscaleStartOnLogin
+    type: bool
+    value: true

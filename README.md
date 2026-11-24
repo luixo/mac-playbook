@@ -78,8 +78,6 @@ Misc:
   - import projects from `~/DataGripProjects`
   - download required drivers
   - re-enter all the passwords
-- Tailscale
-  - launch at login
 - Manual dock / widget / launchpad restoration (with lporg.yaml hints) until alternative to lporg is found
 - Mark ACL in keychain as open to everyone for keys: lookup `keychain_id` in this repo for the keys
 
