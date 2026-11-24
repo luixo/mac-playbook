@@ -86,6 +86,8 @@
   loop:
     - ".history/"
     - "tsconfig.tsbuildinfo"
+    - ".DS_Store"
+    - "**/.claude/"
 
 - name: "Setup git attributes config"
   ansible.builtin.file:
