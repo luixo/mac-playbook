@@ -74,7 +74,6 @@ Misc:
   - import projects from `~/DataGripProjects`
   - download required drivers
   - re-enter all the passwords
-- Manual dock / widget / launchpad restoration (with lporg.yaml hints) until alternative to lporg is found
 
 ### Follow-up for next restorations
 
