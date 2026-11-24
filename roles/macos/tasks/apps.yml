@@ -33,7 +33,7 @@
     - postgresql@18
     - opencode
     - restic
-    - duti
+    - utiluti
     - displayplacer
     - rust
 
