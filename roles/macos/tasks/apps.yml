@@ -31,8 +31,6 @@
     - openjdk
     - openjdk@21
     - postgresql@18
-    - pyenv
-    - python@3.12
     - opencode
     - restic
     - duti
