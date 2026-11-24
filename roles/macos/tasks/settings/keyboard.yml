@@ -123,10 +123,3 @@
     key: "AppleFnUsageType"
     type: int
     value: 2
-
-- name: "Keyboard: turn off the language indicator while switching input sources."
-  osx_defaults:
-    domain: "kCFPreferencesAnyApplication"
-    key: "TSMLanguageIndicatorEnabled"
-    type: bool
-    value: false

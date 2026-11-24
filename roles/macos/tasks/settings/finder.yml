@@ -5,13 +5,6 @@
     type: bool
     value: false
 
-- name: "Finder: show POSIX path in Finder title"
-  osx_defaults:
-    domain: "com.apple.finder"
-    key: "FXShowPosixPathInTitle"
-    type: bool
-    value: true
-
 - name: "Finder: new window target as home directory"
   osx_defaults:
     domain: "com.apple.finder"

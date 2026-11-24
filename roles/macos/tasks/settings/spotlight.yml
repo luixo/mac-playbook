@@ -2,7 +2,8 @@
   osx_defaults:
     domain: "com.apple.controlcenter"
     key: "NSStatusItem Visible Item-0"
-    state: false
+    type: bool
+    value: false
 
 - name: "Turn off Spotlight"
   shell: "mdutil -a -i off"
