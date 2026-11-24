@@ -55,8 +55,6 @@ Authorize in:
 Misc:
 
 - Touch ID: add more fingerprints (left & right index & right thumb)
-- Dia
-  - add extensions: Adguard
 - Apple locator: register
 - Bitwarden settings:
   - autocomplete
