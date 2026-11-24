@@ -62,7 +62,6 @@ Misc:
 - Dia
   - set as default browser
   - add extensions: Adguard
-- GPG: run `echo "test" | gpg --clearsign` and type the password (from Bitwarden) to sign in into GPG
 - Apple locator: register
 - Bitwarden settings:
   - autocomplete

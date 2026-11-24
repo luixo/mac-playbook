@@ -63,6 +63,11 @@
     path: "~/.gnupg/gpg-agent.conf"
     line: "pinentry-program /opt/homebrew/bin/pinentry-mac"
 
+- name: "Allow the agent to accept preset passphrases"
+  ansible.builtin.lineinfile:
+    path: "~/.gnupg/gpg-agent.conf"
+    line: "allow-preset-passphrase"
+
 - name: "Set GPG TTY in zsh"
   ansible.builtin.blockinfile:
     path: "~/.zshenv"
@@ -76,4 +81,25 @@
 
 - name: Restart GPG agent
   shell: gpgconf --kill gpg-agent
+  changed_when: false
+
+# Replaces the manual "echo test | gpg --clearsign" step: the passphrase is
+# cached right after the agent starts, so the first signed commit does not
+# prompt. It has to be preset again after every agent restart.
+- name: "Get signing keygrip"
+  ansible.builtin.shell: >-
+    gpg --with-keygrip -K --keyid-format=long |
+    awk '/^ssb/ && /\[S\]/ {want=1; next} want && /Keygrip/ {print $3; exit}'
+  register: gpg_keygrip
+  changed_when: false
+
+- name: "Preset the signing passphrase in the agent"
+  ansible.builtin.command:
+    argv:
+      - /opt/homebrew/opt/gnupg/libexec/gpg-preset-passphrase
+      - --preset
+      - "{{ gpg_keygrip.stdout }}"
+  args:
+    stdin: "{{ lookup('community.general.bitwarden', gpg.bw_key, field='password', bw_session=bw_session)[0] }}"
+  no_log: true
   changed_when: false
