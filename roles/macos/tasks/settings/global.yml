@@ -40,7 +40,7 @@
 - name: "Global: prepare .zshrc file"
   ansible.builtin.file:
     path: "~/.zshrc"
-    mode: 0755
+    mode: 0644
     state: touch
     access_time: preserve
     modification_time: preserve

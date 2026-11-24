@@ -2,7 +2,7 @@
   ansible.builtin.file:
     path: "~/{{ item }}"
     state: touch
-    mode: 0755
+    mode: 0644
     access_time: preserve
     modification_time: preserve
   loop:
@@ -24,7 +24,7 @@
   ansible.builtin.copy:
     src: "{{ role_path }}/files/{{ item }}"
     dest: "~/.scripts/{{ item }}"
-    mode: 0744
+    mode: 0755
     force: true
   loop:
     - .restore.sh
