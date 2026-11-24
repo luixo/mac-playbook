@@ -37,8 +37,8 @@
 - name: Setup VSCode
   import_tasks: vscode.yml
 
-- name: Setup Dia
-  import_tasks: dia.yml
+- name: Setup browser
+  import_tasks: browser.yml
 
 - name: Setup Tailscale
   import_tasks: tailscale.yml

@@ -59,7 +59,6 @@ Misc:
 
 - Touch ID: add more fingerprints (left & right index & right thumb)
 - Dia
-  - set as default browser
   - add extensions: Adguard
 - Apple locator: register
 - Bitwarden settings:

@@ -1,4 +1,18 @@
 ---
+- name: Read the current default browser
+  ansible.builtin.command: duti -x https
+  register: default_browser
+  changed_when: false
+
+# macOS shows a one-time "change your default browser?" confirmation for a
+# programmatic change, so this is the last manual click of the step.
+- name: Make Dia the default browser
+  ansible.builtin.command: duti -s company.thebrowser.dia {{ item }}
+  loop:
+    - http
+    - https
+  when: "'company.thebrowser.dia' not in default_browser.stdout"
+
 - name: Turn off password and address saving in Dia
   ansible.builtin.shell: |
     set -eu
