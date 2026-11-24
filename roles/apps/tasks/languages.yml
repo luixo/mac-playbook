@@ -1,0 +1,24 @@
+---
+- name: Java / Android
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} Java / Android"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      export ANDROID_HOME="$HOME/Library/Android/sdk"
+      export JAVA_HOME="$(brew --prefix openjdk@21)/libexec/openjdk.jdk/Contents/Home"
+      # Include java / android studio tools in path
+      export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+
+- name: Add Bun completions
+  ansible.builtin.blockinfile:
+    path: "~/.zshrc"
+    marker: "# {mark} Languages"
+    prepend_newline: true
+    append_newline: true
+    block: |
+      export BUN_INSTALL="$HOME/.bun"
+      [[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
+      # Include Bun and it's global binaries in Path
+      export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"

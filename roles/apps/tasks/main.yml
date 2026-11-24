@@ -31,6 +31,9 @@
 - name: Setup FNM
   import_tasks: fnm.yml
 
+- name: Setup language toolchains
+  import_tasks: languages.yml
+
 - name: Setup VSCode
   import_tasks: vscode.yml
 
