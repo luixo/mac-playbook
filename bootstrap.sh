@@ -40,6 +40,7 @@ if ! brew config >& /dev/null; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 fi
+export HOMEBREW_NO_ASK=1
 
 # Activate Homebrew for the bootstrap script
 echo "Adding homebrew to PATH"
