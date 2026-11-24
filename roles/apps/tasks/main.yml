@@ -48,3 +48,6 @@
 
 - name: Setup Backup environment
   import_tasks: backup.yml
+
+- name: Setup Telegram
+  import_tasks: telegram.yml

@@ -65,13 +65,9 @@ Misc:
   - autocomplete
     - turn off browser autocomplete
 - Telegram options
-  - emoji -> suggest -> off
-  - emoji -> sticker packs -> suggest instead of stickers -> off
-  - general -> emoji -> emoji autoreplace -> off
-  - general -> interface -> all off
-  - sound -> off
-  - general -> send messages -> as cmd+enter
-  - appearance -> text size 3/7
+  - emoji -> sticker packs -> Suggest stickers: None
+  - general -> interface: Contacts tab, Calls tab, status bar item and chat previews all off
+  - appearance -> text size: 3rd marker (13 pt on the 11–18 pt scale)
 - Notion options
   - Preferences -> Use Command Search -> off
 - DataGrip

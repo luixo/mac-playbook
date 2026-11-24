@@ -1,0 +1,28 @@
+---
+- name: Turn off in-app sounds
+  community.general.osx_defaults:
+    domain: ru.keepcoder.Telegram
+    key: kInAppSoundsType
+    type: bool
+    value: true
+
+- name: Turn off emoji autoreplace
+  community.general.osx_defaults:
+    domain: ru.keepcoder.Telegram
+    key: kAutomaticConvertEmojiesType2
+    type: bool
+    value: true
+
+- name: Do not suggest swapping emoji for stickers
+  community.general.osx_defaults:
+    domain: ru.keepcoder.Telegram
+    key: kSuggestSwapEmoji
+    type: bool
+    value: false
+
+- name: Send messages with cmd+enter
+  community.general.osx_defaults:
+    domain: ru.keepcoder.Telegram
+    key: kSendingType
+    type: string
+    value: cmdEnter
