@@ -12,12 +12,6 @@
     type: int
     value: 5
 
-- name: "Keyboard: holding a key should repeat a key"
-  osx_defaults:
-    domain: "NSGlobalDomain"
-    key: "ApplePressAndHoldEnabled"
-    state: absent
-
 - name: "Keyboard: don't add period with double space"
   osx_defaults:
     domain: "NSGlobalDomain"
