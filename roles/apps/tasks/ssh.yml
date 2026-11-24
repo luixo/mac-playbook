@@ -60,7 +60,7 @@
     - name: "List identities"
       shell: >-
         ssh-add -L
-      ignore_errors: true
+      failed_when: false
       register: ssh_list_result
       changed_when: false
 
@@ -71,6 +71,7 @@
 
 - name: Prepopulate hosts
   community.general.ssh_config:
+    ssh_config_file: "{{ ansible_facts.env.HOME }}/.ssh/config"
     host: "{{ item.key }}"
     hostname: "{{ item.key }}.{{ tailnet.domain }}"
     remote_user: "{{ item.value.remote_user }}"
