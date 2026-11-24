@@ -13,9 +13,6 @@
 - name: Add launchd jobs
   import_tasks: launchd.yml
 
-- name: Setup dock
-  import_tasks: lporg.yml
-
 - name: Include homebrew role
   include_role:
     name: geerlingguy.mac.homebrew
