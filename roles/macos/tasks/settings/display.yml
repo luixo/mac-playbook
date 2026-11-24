@@ -1,0 +1,23 @@
+---
+- name: "Display: use the largest HiDPI resolution"
+  ansible.builtin.shell: |
+    set -eu
+    listing="$(displayplacer list)"
+    id="$(printf '%s\n' "$listing" | sed -n 's/^Persistent screen id: //p' | head -n1)"
+    current="$(printf '%s\n' "$listing" | sed -n 's/^Resolution: //p' | head -n1)"
+    largest="$(printf '%s\n' "$listing" \
+      | sed -n 's/.*res:\([0-9]*x[0-9]*\) .*scaling:on.*/\1/p' \
+      | sort -t x -k1,1n -k2,2n | tail -n1)"
+    if [[ -z "$id" || -z "$largest" ]]; then
+      echo "could not parse displayplacer output" >&2
+      exit 1
+    fi
+    if [[ "$current" == "$largest" ]]; then
+      exit 0
+    fi
+    displayplacer "id:$id res:$largest color_depth:8 scaling:on origin:(0,0) degree:0"
+    echo changed
+  args:
+    executable: /bin/zsh
+  register: display_state
+  changed_when: "'changed' in display_state.stdout"

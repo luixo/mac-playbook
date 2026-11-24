@@ -34,6 +34,7 @@
     - opencode
     - restic
     - duti
+    - displayplacer
     - rust
 
 - name: Install Homebrew casks
