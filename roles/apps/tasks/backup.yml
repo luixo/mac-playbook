@@ -1,11 +1,43 @@
 ---
 - name: Add backup keys to keychain
   vars:
-    laptop_password: "{{ lookup('community.general.bitwarden', laptop.bw_key, field='password', bw_session=bw_session)[0] }}"
+    restic_password: "{{ lookup('community.general.bitwarden', restic.password.bw_key, field=restic.password.key_id, bw_session=bw_session)[0] }}"
+    scaleway_key_id: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.key_id, bw_session=bw_session)[0] }}"
+    scaleway_secret: "{{ lookup('community.general.bitwarden', restic.swc_s3.bw_key, field=restic.swc_s3.access_key, bw_session=bw_session)[0] }}"
   block:
-    - name: Store backup password
-      community.general.keyring:
-        keyring_password: "{{ laptop_password }}"
-        service: "{{ restic.password.keychain_id }}"
-        username: restic
-        password: "{{ lookup('community.general.bitwarden', restic.password.bw_key, field=restic.password.key_id, bw_session=bw_session)[0] }}"
+    - name: Drop old keychain items so their access list can be rebuilt
+      ansible.builtin.command:
+        argv:
+          - security
+          - delete-generic-password
+          - -s
+          - "{{ item }}"
+      loop:
+        - "{{ restic.password.keychain_id }}"
+        - "{{ restic.swc_s3.keychain_id }}"
+      failed_when: false
+      changed_when: false
+      no_log: true
+
+    - name: Store backup credentials in keychain, readable by all applications
+      ansible.builtin.command:
+        argv:
+          - security
+          - add-generic-password
+          - -A
+          - -a
+          - "{{ item.account }}"
+          - -s
+          - "{{ item.service }}"
+          - -w
+          - "{{ item.secret }}"
+      loop:
+        - service: "{{ restic.password.keychain_id }}"
+          account: restic
+          secret: "{{ restic_password }}"
+        - service: "{{ restic.swc_s3.keychain_id }}"
+          account: "{{ scaleway_key_id }}"
+          secret: "{{ scaleway_secret }}"
+      loop_control:
+        label: "{{ item.service }}"
+      no_log: true
