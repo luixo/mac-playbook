@@ -18,6 +18,7 @@
     virtualenv_site_packages: yes
   with_items:
     - pip
+    - packaging
     - docker-py
     - requests
     - paramiko
