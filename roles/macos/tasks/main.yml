@@ -4,6 +4,10 @@
 - name: Install applications
   import_tasks: apps.yml
 
+- name: Include homebrew role
+  include_role:
+    name: geerlingguy.mac.homebrew
+
 - name: Configure OS / app settings
   import_tasks: settings.yml
 
@@ -12,7 +16,3 @@
 
 - name: Add launchd jobs
   import_tasks: launchd.yml
-
-- name: Include homebrew role
-  include_role:
-    name: geerlingguy.mac.homebrew
