@@ -67,3 +67,17 @@
     - zulu@17
     - happ
     - setshot
+
+- name: Clear the download quarantine flag from installed apps
+  ansible.builtin.shell: |
+    set -eu
+    for app in /Applications/*.app; do
+      xattr -p com.apple.quarantine "$app" >/dev/null 2>&1 || continue
+      if xattr -dr com.apple.quarantine "$app"; then
+        echo "$app"
+      else
+        echo "could not clear the quarantine flag on $app" >&2
+      fi
+    done
+  register: quarantine_cleared
+  changed_when: quarantine_cleared.stdout | length > 0
