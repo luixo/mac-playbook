@@ -6,6 +6,7 @@ This playbook bootstraps a fresh Mac to be ready for my personal usage.
 
 1. Run MacOS install wizard
 1. Login to iCloud
+1. Open AppStore once and accept the terms
 1. Login into [Bitwarden Vault](https://vault.bitwarden.com/#/settings/security/security-keys) to obtain an API key
 1. Add Terminal app to Settings -> Privacy and Security -> Full Disk Access
 
