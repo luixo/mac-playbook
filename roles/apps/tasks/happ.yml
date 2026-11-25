@@ -1,4 +1,10 @@
 ---
+- name: Install Happ from the App Store
+  ansible.builtin.command: mas install 6504287215
+  register: happ_install
+  changed_when: "'already installed' not in ((happ_install.stdout ~ happ_install.stderr) | lower)"
+  failed_when: false
+
 - name: Check whether the Happ subscription was added
   ansible.builtin.stat:
     path: "{{ happ.config_dir }}/subscription-added"

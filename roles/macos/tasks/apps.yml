@@ -65,7 +65,6 @@
     - hoppscotch
     - android-platform-tools
     - zulu@17
-    - happ
     - setshot
 
 - name: Clear the download quarantine flag from installed apps
