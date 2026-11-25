@@ -61,6 +61,7 @@ docker:
   token_field: "PAT Token"
 happ:
   bw_key: "Happ"
+  config_dir: "{{ ansible_facts.env.HOME }}/.config/happ"
 restic:
   job_name: "me.luixo.backup_notify"
   password:

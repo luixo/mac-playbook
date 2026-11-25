@@ -1,18 +1,30 @@
 ---
+- name: Check whether the Happ subscription was added
+  ansible.builtin.stat:
+    path: "{{ happ.config_dir }}/subscription-added"
+  register: happ_subscription_added
+
 - name: Add the Happ subscription
+  when: not happ_subscription_added.stat.exists
   vars:
     subscription_url: "{{ lookup('community.general.bitwarden', happ.bw_key, field='password', bw_session=bw_session)[0] }}"
-  ansible.builtin.command:
-    argv:
-      - open
-      - "happ://add/{{ subscription_url | urlencode | replace('/', '%2F') }}"
-  args:
-    creates: "{{ ansible_facts.env.HOME }}/.config/happ/subscription-added"
-  no_log: true
+  block:
+    - name: Ensure the Happ config dir exists
+      ansible.builtin.file:
+        path: "{{ happ.config_dir }}"
+        state: directory
+        mode: "0755"
 
-- name: Remember the subscription was added
-  ansible.builtin.copy:
-    content: "{{ subscription_url | hash('sha256') }}\n"
-    dest: "{{ ansible_facts.env.HOME }}/.config/happ/subscription-added"
-    mode: 0600
-  no_log: true
+    - name: Open the Happ subscription link
+      ansible.builtin.command:
+        argv:
+          - open
+          - "happ://add/{{ subscription_url | urlencode | replace('/', '%2F') }}"
+      no_log: true
+
+    - name: Remember the subscription was added
+      ansible.builtin.copy:
+        content: "{{ subscription_url | hash('sha256') }}\n"
+        dest: "{{ happ.config_dir }}/subscription-added"
+        mode: "0600"
+      no_log: true
