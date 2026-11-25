@@ -2,7 +2,7 @@
 - name: Install Happ from the App Store
   ansible.builtin.command: mas install 6504287215
   register: happ_install
-  changed_when: "'already installed' not in ((happ_install.stdout ~ happ_install.stderr) | lower)"
+  changed_when: happ_install.rc == 0 and "already installed" not in ((happ_install.stdout ~ happ_install.stderr) | lower)
   failed_when: false
 
 - name: Check whether the Happ subscription was added
@@ -11,7 +11,9 @@
   register: happ_subscription_added
 
 - name: Add the Happ subscription
-  when: not happ_subscription_added.stat.exists
+  when:
+    - happ_install.rc == 0
+    - not happ_subscription_added.stat.exists
   vars:
     subscription_url: "{{ lookup('community.general.bitwarden', happ.bw_key, field='password', bw_session=bw_session)[0] }}"
   block:
@@ -20,6 +22,14 @@
         path: "{{ happ.config_dir }}"
         state: directory
         mode: "0755"
+
+    - name: Register the Happ app with LaunchServices
+      ansible.builtin.command:
+        argv:
+          - /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+          - -f
+          - /Applications/Happ.app
+      changed_when: false
 
     - name: Open the Happ subscription link
       ansible.builtin.command:
