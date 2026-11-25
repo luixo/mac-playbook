@@ -29,3 +29,9 @@
   ansible.builtin.fail:
     msg: "Something went wrong, bw_session is empty, try `bw logout` and `bw login` again"
   when: bw_session | length == 0
+
+- name: Sync the Bitwarden vault
+  ansible.builtin.command: bw sync
+  environment:
+    BW_SESSION: "{{ bw_session }}"
+  changed_when: false
