@@ -1,83 +1,103 @@
 ---
-- name: Read the Tailscale state
-  ansible.builtin.command:
-    argv:
-      - tailscale
-      - status
-      - --json
-  register: tailscale_status
+- name: Check the Tailscale network extension
+  ansible.builtin.command: systemextensionsctl list
+  register: tailscale_extension
   changed_when: false
   failed_when: false
 
-- name: Remember the Tailscale backend state
+- name: Remember whether the Tailscale network extension is allowed
   ansible.builtin.set_fact:
-    tailscale_state: "{{ (tailscale_status.stdout | from_json).BackendState | default('') }}"
-  when: tailscale_status.rc == 0
+    tailscale_ready: "{{ tailscale_extension.stdout is search('(?i)tailscale[^\n]*activated enabled') }}"
 
-- name: Log in to Tailscale with a key from the OAuth client
-  when: tailscale_state | default('') not in ["Running", "Starting"]
+- name: Configure Tailscale
+  when: tailscale_ready | bool
   block:
-    - name: Create a temporary file for the OAuth client credentials
-      ansible.builtin.tempfile:
-        state: file
-        suffix: tailscale-oauth
-      register: tailscale_credentials_file
-
-    - name: Write the OAuth client credentials
-      ansible.builtin.copy:
-        content: |
-          client_id={{ lookup('community.general.bitwarden', tailscale.bw_key, field=tailscale.client_id_field, bw_session=bw_session)[0] }}
-          client_secret={{ lookup('community.general.bitwarden', tailscale.bw_key, field=tailscale.client_secret_field, bw_session=bw_session)[0] }}
-        dest: "{{ tailscale_credentials_file.path }}"
-        mode: "0600"
-      no_log: true
-
-    - name: Mint an auth key and log in
-      ansible.builtin.shell: |
-        set -euo pipefail
-        client_id=$(sed -n 's/^client_id=//p' "$TS_CREDENTIALS")
-        client_secret=$(sed -n 's/^client_secret=//p' "$TS_CREDENTIALS")
-        body="{\"capabilities\":{\"devices\":{\"create\":{\"reusable\":false,\"ephemeral\":false,\"preauthorized\":true,\"tags\":[\"$TS_TAG\"]}}},\"expirySeconds\":600}"
-
-        response=$(curl -sS -d "client_id=$client_id" -d "client_secret=$client_secret" \
-          https://api.tailscale.com/api/v2/oauth/token)
-        token=$(printf '%s' "$response" | jq -r '.access_token // empty')
-        if [ -z "$token" ]; then
-          echo "Tailscale refused the OAuth client credentials: $response" >&2
-          exit 1
-        fi
-
-        response=$(curl -sS -X POST "https://api.tailscale.com/api/v2/tailnet/-/keys" \
-          -H "Authorization: Bearer $token" \
-          -H "Content-Type: application/json" \
-          -d "$body")
-        key=$(printf '%s' "$response" | jq -r '.key // empty')
-        if [ -z "$key" ]; then
-          echo "Tailscale refused to mint an auth key: $response" >&2
-          exit 1
-        fi
-
-        tailscale login --auth-key "$key" --timeout 120s
-      args:
-        executable: /bin/sh
-      environment:
-        TS_CREDENTIALS: "{{ tailscale_credentials_file.path }}"
-        TS_TAG: "{{ tailscale.tag }}"
+    - name: Read the Tailscale state
+      ansible.builtin.command:
+        argv:
+          - tailscale
+          - status
+          - --json
+      register: tailscale_status
       changed_when: false
-  always:
-    - name: Remove the temporary credentials file
-      ansible.builtin.file:
-        path: "{{ tailscale_credentials_file.path }}"
-        state: absent
-      when: tailscale_credentials_file is defined and tailscale_credentials_file.path is defined
+      failed_when: false
 
-- name: Use tailnet DNS so MagicDNS names resolve
-  ansible.builtin.command: tailscale set --accept-dns=true
-  changed_when: false
+    - name: Remember the Tailscale backend state
+      ansible.builtin.set_fact:
+        tailscale_state: "{{ (tailscale_status.stdout | from_json).BackendState | default('') }}"
+      when: tailscale_status.rc == 0
 
-- name: Launch Tailscale at login
-  community.general.osx_defaults:
-    domain: io.tailscale.ipn.macsys
-    key: TailscaleStartOnLogin
-    type: bool
-    value: true
+    - name: Log in to Tailscale with a key from the OAuth client
+      when: tailscale_state | default('') not in ["Running", "Starting"]
+      block:
+        - name: Create a temporary file for the OAuth client credentials
+          ansible.builtin.tempfile:
+            state: file
+            suffix: tailscale-oauth
+          register: tailscale_credentials_file
+
+        - name: Write the OAuth client credentials
+          ansible.builtin.copy:
+            content: |
+              client_id={{ lookup('community.general.bitwarden', tailscale.bw_key, field=tailscale.client_id_field, bw_session=bw_session)[0] }}
+              client_secret={{ lookup('community.general.bitwarden', tailscale.bw_key, field=tailscale.client_secret_field, bw_session=bw_session)[0] }}
+            dest: "{{ tailscale_credentials_file.path }}"
+            mode: "0600"
+          no_log: true
+
+        - name: Mint an auth key and log in
+          ansible.builtin.shell: |
+            set -euo pipefail
+            client_id=$(sed -n 's/^client_id=//p' "$TS_CREDENTIALS")
+            client_secret=$(sed -n 's/^client_secret=//p' "$TS_CREDENTIALS")
+            body="{\"capabilities\":{\"devices\":{\"create\":{\"reusable\":false,\"ephemeral\":false,\"preauthorized\":true,\"tags\":[\"$TS_TAG\"]}}},\"expirySeconds\":600}"
+
+            response=$(curl -sS -d "client_id=$client_id" -d "client_secret=$client_secret" \
+              https://api.tailscale.com/api/v2/oauth/token)
+            token=$(printf '%s' "$response" | jq -r '.access_token // empty')
+            if [ -z "$token" ]; then
+              echo "Tailscale refused the OAuth client credentials: $response" >&2
+              exit 1
+            fi
+
+            response=$(curl -sS -X POST "https://api.tailscale.com/api/v2/tailnet/-/keys" \
+              -H "Authorization: Bearer $token" \
+              -H "Content-Type: application/json" \
+              -d "$body")
+            key=$(printf '%s' "$response" | jq -r '.key // empty')
+            if [ -z "$key" ]; then
+              echo "Tailscale refused to mint an auth key: $response" >&2
+              exit 1
+            fi
+
+            tailscale login --auth-key "$key" --timeout 120s
+          args:
+            executable: /bin/sh
+          environment:
+            TS_CREDENTIALS: "{{ tailscale_credentials_file.path }}"
+            TS_TAG: "{{ tailscale.tag }}"
+          changed_when: false
+      always:
+        - name: Remove the temporary credentials file
+          ansible.builtin.file:
+            path: "{{ tailscale_credentials_file.path }}"
+            state: absent
+          when: tailscale_credentials_file is defined and tailscale_credentials_file.path is defined
+
+    - name: Use tailnet DNS so MagicDNS names resolve
+      ansible.builtin.command: tailscale set --accept-dns=true
+      changed_when: false
+
+    - name: Launch Tailscale at login
+      community.general.osx_defaults:
+        domain: io.tailscale.ipn.macsys
+        key: TailscaleStartOnLogin
+        type: bool
+        value: true
+
+- name: Explain how to allow the Tailscale network extension
+  ansible.builtin.debug:
+    msg: >-
+      macOS has not allowed the Tailscale network extension, so the Tailscale tasks were skipped: every tailscale command would wait for that permission.
+      Open the Tailscale app once, then in System Settings → General → Login Items & Extensions → Network Extensions turn Tailscale on, and re-run.
+  when: not (tailscale_ready | bool)
