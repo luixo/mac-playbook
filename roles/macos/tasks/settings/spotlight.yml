@@ -5,6 +5,14 @@
     type: bool
     value: false
 
-- name: "Turn off Spotlight"
-  shell: "mdutil -a -i off"
+- name: "Spotlight: read indexing state"
+  ansible.builtin.command: mdutil -a -s
   become: true
+  register: spotlight_indexing
+  changed_when: false
+  failed_when: false
+
+- name: "Turn off Spotlight"
+  ansible.builtin.command: mdutil -a -i off
+  become: true
+  when: "'Indexing enabled' in spotlight_indexing.stdout"

@@ -17,6 +17,7 @@
         state: file
         suffix: docker-pat
       register: docker_token_file
+      changed_when: false
 
     - name: Write the Docker personal access token
       vars:
@@ -26,6 +27,7 @@
         dest: "{{ docker_token_file.path }}"
         mode: "0600"
       no_log: true
+      changed_when: false
 
     - name: Log in to Docker Hub
       vars:
@@ -39,4 +41,5 @@
       ansible.builtin.file:
         path: "{{ docker_token_file.path }}"
         state: absent
+      changed_when: false
       when: docker_token_file is defined and docker_token_file.path is defined

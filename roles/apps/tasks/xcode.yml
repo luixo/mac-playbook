@@ -2,7 +2,7 @@
 - name: Install Xcode from the App Store
   ansible.builtin.command: mas install 497799835
   register: xcode_install
-  changed_when: "'already installed' not in xcode_install.stdout"
+  changed_when: "'already installed' not in ((xcode_install.stdout ~ xcode_install.stderr) | lower)"
   failed_when: false
 
 - name: Report Xcode install failure

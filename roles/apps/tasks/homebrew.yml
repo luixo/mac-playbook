@@ -22,10 +22,13 @@
       # https://github.com/Homebrew/brew/blob/master/Library/Homebrew/cmd/shellenv.sh
       eval "$(brew shellenv)"
 
-- name: Remove brew autoupdate
-  ansible.builtin.command: >
-    brew autoupdate delete
+- name: Read the brew autoupdate settings
+  ansible.builtin.command: brew autoupdate status
+  register: brew_autoupdate
+  changed_when: false
+  failed_when: false
 
 - name: Start brew autoupdate
   ansible.builtin.command: >
     brew autoupdate start 12h --upgrade --cleanup --sudo --ac-only
+  when: brew_autoupdate.rc != 0
