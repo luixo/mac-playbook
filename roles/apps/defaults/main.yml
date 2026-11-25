@@ -73,3 +73,5 @@ restic:
     bw_key: "Scaleway"
     key_id: "S3 key id"
     access_key: "S3 access key"
+
+mas_command: "{{ '/opt/homebrew/bin/mas' }}"

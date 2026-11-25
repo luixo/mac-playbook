@@ -1,9 +1,10 @@
 ---
 - name: Install Happ from the App Store
-  ansible.builtin.command: mas install 6504287215
+  ansible.builtin.command: "{{ mas_command }} install 6504287215"
   register: happ_install
   environment:
     MAS_NO_AUTO_INDEX: "1"
+  become: true
   changed_when: happ_install.rc == 0 and "already installed" not in ((happ_install.stdout ~ happ_install.stderr) | lower)
   failed_when: false
 

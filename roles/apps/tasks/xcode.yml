@@ -1,9 +1,10 @@
 ---
 - name: Install Xcode from the App Store
-  ansible.builtin.command: mas install 497799835
+  ansible.builtin.command: "{{ mas_command }} install 497799835"
   register: xcode_install
   environment:
     MAS_NO_AUTO_INDEX: "1"
+  become: true
   changed_when: xcode_install.rc == 0 and "already installed" not in ((xcode_install.stdout ~ xcode_install.stderr) | lower)
   failed_when: false
 
