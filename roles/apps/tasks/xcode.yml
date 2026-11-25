@@ -2,20 +2,25 @@
 - name: Install Xcode from the App Store
   ansible.builtin.command: mas install 497799835
   register: xcode_install
+  environment:
+    MAS_NO_AUTO_INDEX: "1"
   changed_when: xcode_install.rc == 0 and "already installed" not in ((xcode_install.stdout ~ xcode_install.stderr) | lower)
   failed_when: false
-
-- name: Report Xcode install failure
-  ansible.builtin.debug:
-    msg: >-
-      Xcode was not installed ({{ xcode_install.stderr | default('no output') | trim }}).
-      Sign in to the App Store first, then re-run this task.
-  when: xcode_install.rc != 0
 
 - name: Check Xcode is installed
   ansible.builtin.stat:
     path: /Applications/Xcode.app
   register: xcode_app
+
+# mas succeeds even when the App Store cannot install anything, so the app on
+# disk is the only reliable answer.
+- name: Fail when the App Store did not install Xcode
+  ansible.builtin.fail:
+    msg: >-
+      Xcode is not installed. Open the App Store once, sign in, and accept its
+      welcome dialog, then re-run the playbook.
+      mas said: {{ (xcode_install.stderr | default('')).splitlines() | last | default('no output') }}
+  when: not xcode_app.stat.exists
 
 - name: Point the command line tools at Xcode
   ansible.builtin.command: xcode-select -s /Applications/Xcode.app

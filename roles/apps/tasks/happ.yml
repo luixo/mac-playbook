@@ -2,8 +2,23 @@
 - name: Install Happ from the App Store
   ansible.builtin.command: mas install 6504287215
   register: happ_install
+  environment:
+    MAS_NO_AUTO_INDEX: "1"
   changed_when: happ_install.rc == 0 and "already installed" not in ((happ_install.stdout ~ happ_install.stderr) | lower)
   failed_when: false
+
+- name: Check Happ is installed
+  ansible.builtin.stat:
+    path: /Applications/Happ.app
+  register: happ_app
+
+- name: Fail when the App Store did not install Happ
+  ansible.builtin.fail:
+    msg: >-
+      Happ is not installed. Open the App Store once, sign in, and accept its
+      welcome dialog, then re-run the playbook.
+      mas said: {{ (happ_install.stderr | default('')).splitlines() | last | default('no output') }}
+  when: not happ_app.stat.exists
 
 - name: Check whether the Happ subscription was added
   ansible.builtin.stat:
@@ -12,7 +27,7 @@
 
 - name: Add the Happ subscription
   when:
-    - happ_install.rc == 0
+    - happ_app.stat.exists
     - not happ_subscription_added.stat.exists
   vars:
     subscription_url: "{{ lookup('community.general.bitwarden', happ.bw_key, field='password', bw_session=bw_session)[0] }}"
