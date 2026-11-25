@@ -19,13 +19,6 @@
     type: bool
     value: true
 
-- name: "Dock: wipe all (default) app icons"
-  osx_defaults:
-    domain: "com.apple.dock"
-    key: "persistent-apps"
-    type: array
-    value: []
-
 - name: "Dock: Turn off Notes hot corner"
   osx_defaults:
     domain: "com.apple.dock"
@@ -47,6 +40,59 @@
     type: int
     value: 1
 
-- name: "Dock: apps"
-  include_role:
-    name: geerlingguy.mac.dock
+- name: "Dock: install dockutil"
+  community.general.homebrew:
+    name: dockutil
+    state: present
+
+- name: "Dock: read the current items"
+  ansible.builtin.command: dockutil --list
+  register: dock_current
+  changed_when: false
+
+- name: "Dock: collect the current app paths"
+  ansible.builtin.set_fact:
+    dock_current_paths: >-
+      {{ dock_current.stdout_lines
+         | map('regex_replace', '^[^\t]*\t(?:file://)?([^\t]*)\tpersistentApps\t.*$', '\1')
+         | select('search', '^/')
+         | map('replace', '%20', ' ')
+         | map('regex_replace', '/+$', '')
+         | list }}
+
+- name: "Dock: rebuild when the items differ from the configuration"
+  when: >-
+    dock_current_paths != dockitems_persist
+    | sort(attribute='pos') | map(attribute='path') | map('regex_replace', '/+$', '') | list
+  block:
+    - name: "Dock: remove the current app items"
+      ansible.builtin.command:
+        argv:
+          - dockutil
+          - --remove
+          - "{{ item }}"
+          - --no-restart
+      loop: >-
+        {{ dock_current.stdout_lines
+           | map('regex_replace', '^[^\t]*\t([^\t]*)\tpersistentApps\t.*$', '\1')
+           | select('search', '^(/|file://)')
+           | list }}
+      changed_when: true
+
+    - name: "Dock: add the configured items in order"
+      ansible.builtin.command:
+        argv:
+          - dockutil
+          - --add
+          - "{{ item.path }}"
+          - --label
+          - "{{ item.name }}"
+          - --no-restart
+      loop: "{{ dockitems_persist | sort(attribute='pos') }}"
+      loop_control:
+        label: "{{ item.name }}"
+      changed_when: true
+
+    - name: "Dock: restart to show the items"
+      ansible.builtin.command: killall Dock
+      changed_when: true

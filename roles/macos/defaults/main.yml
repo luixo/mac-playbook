@@ -1,7 +1,6 @@
 playbook:
   owner: "{{ owner }}"
   repo: "mac-playbook"
-dockutil_install: true
 dockitems_persist:
   - name: Dia
     path: /Applications/Dia.app/
