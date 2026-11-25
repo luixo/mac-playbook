@@ -77,9 +77,10 @@ cd $playbook_repo_dir
 # Install ansible requirements
 echo "Installing Ansible requirements..."
 if [[ ! -d ansible_collections/community/general ]]; then
-  # Remove -f when patch is not needed anymore
+  # Remove -f when patches are not needed anymore
   ansible-galaxy collection install -r requirements.yml -f
   patch < patches/bitwarden.patch
+  patch < patches/osx_defaults.patch
 fi
 
 echo ""
