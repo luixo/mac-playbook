@@ -41,3 +41,4 @@
       loop_control:
         label: "{{ item.service }}"
       no_log: true
+      changed_when: false
