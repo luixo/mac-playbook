@@ -44,6 +44,6 @@
   import_tasks: settings/screen_capture.yml
 
 - name: Restart affected services
-  shell: "killall cfprefsd Dock Finder SystemUIServer TouchBarServer 'Activity Monitor'"
+  shell: "killall cfprefsd Dock Finder SystemUIServer TouchBarServer WindowManager 'Activity Monitor'"
   become: true
   changed_when: false
