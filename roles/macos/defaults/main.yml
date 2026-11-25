@@ -22,7 +22,7 @@ dockitems_persist:
     path: /System/Applications/System Settings.app/
     pos: 6
   - name: Slack
-    path: /System/Applications/Slack.app/
+    path: /Applications/Slack.app/
     pos: 7
   - name: Calendar
     path: /System/Applications/Calendar.app/
