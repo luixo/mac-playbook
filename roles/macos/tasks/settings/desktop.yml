@@ -1,0 +1,13 @@
+- name: "Desktop: hide widgets"
+  osx_defaults:
+    domain: "com.apple.WindowManager"
+    key: "StandardHideWidgets"
+    type: int
+    value: 1
+
+- name: "Desktop: hide widgets in Stage Manager"
+  osx_defaults:
+    domain: "com.apple.WindowManager"
+    key: "StageManagerHideWidgets"
+    type: int
+    value: 1

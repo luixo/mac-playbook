@@ -19,6 +19,9 @@
 - name: Configure Clock settings
   import_tasks: settings/clock.yml
 
+- name: Configure Desktop settings
+  import_tasks: settings/desktop.yml
+
 - name: Configure Dock settings
   import_tasks: settings/dock.yml
 
