@@ -40,26 +40,23 @@ launchd_jobs:
     command: "cleanup"
 keyboard:
   symbolic_hotkeys:
-    - name: "next input source"
-      id: 60
-      path: "value:parameters:2"
-      value: "1048576"
-      accepted: ["1048576"]
-    - name: "previous input source"
-      id: 61
-      path: "value:parameters:2"
-      value: "1572864"
-      accepted: ["1572864"]
-    - name: "open spotlight"
-      id: 64
-      path: "enabled"
-      value: "0"
-      accepted: ["false", "0"]
-    - name: "open finder"
-      id: 65
-      path: "enabled"
-      value: "0"
-      accepted: ["false", "0"]
+    # 'next input source'
+    60:
+      value:
+        parameters: [32, 49, 1048576]
+    # 'previous input source'
+    61:
+      value:
+        parameters: [32, 49, 1572864]
+    # disable 'open spotlight'
+    64:
+      enabled: false
+    # disable 'open finder'
+    65:
+      enabled: false
+    # disable 'quick note'
+    190:
+      enabled: false
   input_sources:
     - "InputSourceKind": "Keyboard Layout"
       "KeyboardLayout ID": 252

@@ -61,37 +61,15 @@
     type: bool
     value: true
 
-- name: "Finder: read snap to grid setting"
-  ansible.builtin.command:
-    argv:
-      - /usr/libexec/PlistBuddy
-      - -c
-      - "Print :StandardViewSettings:IconViewSettings:arrangeBy"
-      - "{{ ansible_facts.env.HOME }}/Library/Preferences/com.apple.Finder.plist"
-  register: finder_arrange_by
-  changed_when: false
-  failed_when: false
-
 - name: "Finder: snap to grid"
-  ansible.builtin.command:
-    argv:
-      - /usr/libexec/PlistBuddy
-      - -c
-      - "Set :StandardViewSettings:IconViewSettings:arrangeBy name"
-      - "{{ ansible_facts.env.HOME }}/Library/Preferences/com.apple.Finder.plist"
-  when: finder_arrange_by.stdout | trim != "name"
-
-# TODO: Uncomment this and remove a few previous tasks when we can put proper values in dicts
-# https://github.com/ansible-collections/community.general/issues/238#issuecomment-4126880219
-# - name: "Finder: snap to grid"
-#   osx_defaults:
-#     domain: "com.apple.Finder"
-#     key: "StandardViewSettings"
-#     type: dict
-#     dict_mode: add
-#     value:
-#       IconViewSettings:
-#         arrangeBy: name
+  osx_defaults:
+    domain: "com.apple.Finder"
+    key: "StandardViewSettings"
+    type: dict
+    dict_mode: add
+    value:
+      IconViewSettings:
+        arrangeBy: name
 
 - name: "Finder: sort by name"
   osx_defaults:
