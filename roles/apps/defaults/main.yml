@@ -28,6 +28,11 @@ ssh:
       remote_user: root
 tailnet:
   domain: tail5aed95.ts.net
+tailscale:
+  bw_key: "Tailscale"
+  client_id_field: "Client ID"
+  client_secret_field: "Client Secret"
+  tag: "tag:mac"
 gpg:
   owner_email: lexx92@mail.ru
   bw_key: "GPG ECDSA key MacOS"
