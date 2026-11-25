@@ -1,17 +1,18 @@
 ---
+- name: Check Happ is installed
+  ansible.builtin.stat:
+    path: /Applications/Happ.app
+  register: happ_app
+
 - name: Install Happ from the App Store
+  when: not happ_app.stat.exists
   ansible.builtin.command: "{{ mas_command }} install 6504287215"
   register: happ_install
   environment:
     MAS_NO_AUTO_INDEX: "1"
   become: true
-  changed_when: happ_install.rc == 0 and "already installed" not in ((happ_install.stdout ~ happ_install.stderr) | lower)
+  changed_when: happ_install.rc == 0
   failed_when: false
-
-- name: Check Happ is installed
-  ansible.builtin.stat:
-    path: /Applications/Happ.app
-  register: happ_app
 
 - name: Fail when the App Store did not install Happ
   ansible.builtin.fail:
