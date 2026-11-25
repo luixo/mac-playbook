@@ -27,33 +27,33 @@
         content: >
           {{ lookup('community.general.bitwarden', ssh.bw_key, field='login', bw_session=bw_session)[0].username }}
 
-- name: "Setup SSH config"
-  block:
-    - name: "Touch SSH config"
-      ansible.builtin.file:
-        path: "~/.ssh/config"
-        mode: 0644
-        state: touch
-        access_time: preserve
-        modification_time: preserve
+- name: "Include the managed SSH settings"
+  ansible.builtin.lineinfile:
+    path: "~/.ssh/config"
+    line: "Include {{ ansible_facts.env.HOME }}/.ssh/playbook.conf"
+    insertbefore: BOF
+    create: true
+    mode: "0644"
 
-    - name: "Ensure AddKeysToAgent setting is set"
-      ansible.builtin.lineinfile:
-        path: "~/.ssh/config"
-        line: "AddKeysToAgent yes"
-        regexp: ^AddKeysToAgent
+- name: "Write the managed SSH settings"
+  ansible.builtin.copy:
+    content: |
+      # Managed by the mac-playbook; edit the playbook instead of this file.
+      Host *
+          AddKeysToAgent yes
+          UseKeychain yes
+          IdentityFile ~/.ssh/{{ ssh.identity }}
+      {% for name, host in ssh.hosts.items() %}
 
-    - name: "Ensure UseKeychain setting is set"
-      ansible.builtin.lineinfile:
-        path: "~/.ssh/config"
-        line: "UseKeychain yes"
-        regexp: ^UseKeychain
-
-    - name: "Ensure identity file is set in config"
-      ansible.builtin.lineinfile:
-        path: "~/.ssh/config"
-        line: "IdentityFile ~/.ssh/{{ ssh.identity }}"
-        regexp: "^IdentityFile ~/.ssh/{{ ssh.identity }}$"
+      Host {{ name }}
+          HostName {{ name }}.{{ tailnet.domain }}
+          User {{ host.remote_user }}
+      {% if host.port is defined %}
+          Port {{ host.port }}
+      {% endif %}
+      {% endfor %}
+    dest: "~/.ssh/playbook.conf"
+    mode: "0644"
 
 - name: "Register SSH identity"
   block:
@@ -69,18 +69,7 @@
       shell: >-
         ssh-add --apple-use-keychain ~/.ssh/{{ ssh.identity }}
 
-- name: Prepopulate hosts
-  community.general.ssh_config:
-    ssh_config_file: "{{ ansible_facts.env.HOME }}/.ssh/config"
-    host: "{{ item.key }}"
-    hostname: "{{ item.key }}.{{ tailnet.domain }}"
-    remote_user: "{{ item.value.remote_user }}"
-    port: "{{ item.value.port | default(omit) }}"
-  loop: "{{ ssh.hosts | dict2items }}"
-
-- name: Prepopulate SSH config
-  block:
-    - name: Add Github server to known_hosts
-      ansible.builtin.known_hosts:
-        name: github.com
-        key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+- name: Add Github server to known_hosts
+  ansible.builtin.known_hosts:
+    name: github.com
+    key: "{{ lookup('pipe', 'ssh-keyscan -t ed25519 github.com 2>/dev/null | grep -v ^#') }}"
