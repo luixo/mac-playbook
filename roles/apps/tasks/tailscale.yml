@@ -95,6 +95,13 @@
         type: bool
         value: true
 
+- name: Hide the Tailscale dock icon
+  community.general.osx_defaults:
+    domain: io.tailscale.ipn.macsys
+    key: HideDockIcon
+    type: bool
+    value: true
+
 - name: Explain how to allow the Tailscale network extension
   ansible.builtin.debug:
     msg: >-
