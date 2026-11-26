@@ -30,7 +30,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ## After installation
 
-1. Run `~/.scripts/.restore.sh <target>` to run base restoration process (target can be: `nas` or `scaleway`)
+1. Run `~/.scripts/.restore.sh <target>` to run base restoration process (target can be: `tower` or `scaleway`)
 1. Move files from `~/Downloads/restored` to proper places
 1. Reboot
 

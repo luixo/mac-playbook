@@ -14,8 +14,8 @@ shift
 
 # Set environment variables based on repo choice
 case "$REPO_CHOICE" in
-  nas)
-    export RESTIC_REPOSITORY="sftp:nas:/mnt/user/restic"
+  tower)
+    export RESTIC_REPOSITORY="sftp:tower:/mnt/user/restic"
     ;;
   scaleway)
     export RESTIC_REPOSITORY="s3://s3.fr-par.scw.cloud/luixo-restic-mirror"
@@ -27,7 +27,7 @@ case "$REPO_CHOICE" in
     export AWS_SECRET_ACCESS_KEY=${SCW_AWS_SECRET_ACCESS_KEY}
     ;;
   *)
-    echo "Invalid repository choice: $REPO_CHOICE. Must be one of: nas, scaleway"
+    echo "Invalid repository choice: $REPO_CHOICE. Must be one of: tower, scaleway"
     exit 1
     ;;
 esac
