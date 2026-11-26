@@ -47,6 +47,12 @@
     name: core.editor
     value: "code --wait"
 
+- name: "Git: ignore file mode changes"
+  git_config:
+    scope: global
+    name: core.filemode
+    value: "false"
+
 - name: "Git: excludes file"
   git_config:
     scope: global
